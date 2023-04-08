@@ -26,10 +26,12 @@
 	"type": "module",
 	"dependencies": {
 		"@tonejs/midi": "^2.0.28",
+		"bulma": "^0.9.4",
 		"firebase": "^9.19.1",
 		"firebaseui": "^6.0.2",
 		"midi-parser-js": "^4.0.4",
 		"midi-player-js": "^2.0.16",
+		"sass": "^1.61.0",
 		"three": "^0.151.3"
 	}
 }
