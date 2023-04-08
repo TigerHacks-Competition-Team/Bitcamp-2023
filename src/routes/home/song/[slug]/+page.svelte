@@ -11,7 +11,8 @@
     let keyboardSkeleton : Group;
     let keyboardMesh : Group;
 
-    const noteRotation = 95 * Math.PI / 180
+    const noteOnRotation = 95 * Math.PI / 180
+    const noteOffRotation = 90 * Math.PI / 180
 
     function getNoteBone(i: number) {
         return keyboardSkeleton.children.findIndex(bone => {
@@ -28,11 +29,11 @@
 
                 if (data[0] === 144) {
                     keyboardSkeleton.children[noteBone].rotation.x = 
-                        noteRotation;
+                        noteOnRotation;
                 }
                 if (data[0] === 128) {
                     keyboardSkeleton.children[noteBone].rotation.x = 
-                        noteRotation;
+                        noteOffRotation;
                 }
             }
         }
@@ -119,8 +120,10 @@
     function test() {
         let test = new MidiPlayer.Player(e => {
             if (e.name === "Note on") {
-                console.log(e.noteName)
-                keyboardSkeleton.children[getNoteBone(e.noteNumber)].rotation.x = noteRotation
+                keyboardSkeleton.children[getNoteBone(e.noteNumber)].rotation.x = noteOnRotation
+            }
+            if (e.name === "Note off") {
+                keyboardSkeleton.children[getNoteBone(e.noteNumber)].rotation.x = noteOffRotation
             }
         })
         fetch("../../TEST/test.mid").then(e => e.arrayBuffer().then(e => {
