@@ -1,0 +1,8 @@
+@use "bulma/sass/utilities/all" as defaults;
+@import "vars";
+
+body {
+    margin: 0;
+}
+
+@import "bulma/bulma";
