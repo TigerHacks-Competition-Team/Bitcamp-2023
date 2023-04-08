@@ -25,6 +25,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@tonejs/midi": "^2.0.28",
 		"firebase": "^9.19.1",
 		"firebaseui": "^6.0.2",
 		"midi-parser-js": "^4.0.4",

@@ -3,21 +3,24 @@
 	import { onMount } from 'svelte';
     import * as THREE from 'three';
     import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
-	import type { Group, Mesh, MeshPhysicalMaterial, SkinnedMesh } from 'three/src/Three';
+	import type { Group, Mesh, MeshPhysicalMaterial, Scene, SkinnedMesh } from 'three/src/Three';
 
     import MidiPlayer from 'midi-player-js'
     import MidiParser from 'midi-parser-js'
+    import { Midi } from '@tonejs/midi'
 
     let gameContainer : HTMLDivElement;
     let keyboardSkeleton : Group;
     let keyboardMesh : Group;
     let material : MeshPhysicalMaterial;
+    let scene : Scene;
 
     const noteOnRotation = 95 * Math.PI / 180;
     const noteOffRotation = 90 * Math.PI / 180;
     const highlightedNoteMat = new THREE.MeshStandardMaterial({
         color: "red"
-    })
+    });
+    const cubeGeo = new THREE.BoxGeometry(0.1, 0.1, 0.1);
 
     function getNoteBone(i: number) {
         return keyboardSkeleton.children.findIndex(bone => {
@@ -58,9 +61,7 @@
             (err) => {console.error(`Failed to get MIDI access - ${err}`)}
         );
 
-        TestSpawnNotes();
-
-        const scene = new THREE.Scene();
+        scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(
             45, 
             window.innerWidth / window.innerHeight, 
@@ -119,6 +120,8 @@
                         (child as Mesh).material = material;
                     }
                 });
+
+                TestSpawnNotes();
             }
         );
 
@@ -151,17 +154,39 @@
             test.play()
         }))
     }
+    
+    function spawnNotes(note: number, duration: number) {
+        let cube = new THREE.Mesh(cubeGeo, highlightedNoteMat);
 
-    function TestSpawnNotes() {
-        fetch("../../TEST/test.mid").then(e => e.blob().then(blob => {
-            let reader = new FileReader();
-            reader.onload = (() => {
-                let midiArray = MidiParser.parse(reader.result);
-                console.log(midiArray);
-            });
-            reader.readAsDataURL(blob);
-            
-        }))
+        let noteBone = keyboardSkeleton.children[getNoteBone(note)];
+        noteBone.getWorldPosition(cube.position);
+        noteBone.getWorldScale(cube.scale);
+
+        cube.scale.z = duration;
+        cube.position.z -= 5;
+        scene.add(cube);
+
+        let interval = setInterval(() => {
+            cube.position.z += 0.05;
+
+            if (cube.position.z > 0) {
+                clearInterval(interval);
+                scene.remove(cube);
+
+            }
+        }, 0)
+    }
+
+    async function TestSpawnNotes() {
+        const midi = await Midi.fromUrl("../../TEST/test.mid");
+
+        midi.tracks.forEach(track => {
+            track.notes.forEach(note => {
+                setTimeout(() => {
+                    spawnNotes(note.midi, note.duration * 10);
+                }, note.time * 100)
+            })
+        })
     }
 </script>
 
