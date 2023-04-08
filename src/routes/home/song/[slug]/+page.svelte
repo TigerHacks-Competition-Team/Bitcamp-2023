@@ -119,6 +119,7 @@
                 obj.scale.x = 0.005;
                 obj.scale.y = 0.005;
                 obj.scale.z = 0.005;
+                obj.position.z = 0.5
                 
                 obj.traverse((child) => {
                     if ((child as Mesh).isMesh) {
@@ -160,47 +161,50 @@
         }))
     }
     
-    function spawnNotes(note: number, duration: number) {
+    function spawnNote(note: any) {
         let cube = new THREE.Mesh(cubeGeo, highlightedNoteMat);
 
-        let noteBone = keyboardSkeleton.children[getNoteBone(note)];
+        let noteBone = keyboardSkeleton.children[getNoteBone(note.midi)];
         noteBone.getWorldPosition(cube.position);
         noteBone.getWorldScale(cube.scale);
 
-        cube.scale.z = duration;
-        cube.position.z = -5;
+        cube.scale.z = (note.duration * fallSpeed);
+        cube.position.z = (-note.time * fallSpeed) + (countdownSeconds * fallSpeed);
         scene.add(cube);
 
         return {mesh: cube, note: note}
     }
+
+    const fallSpeed = 2.5
+    const countdownSeconds = 3
 
     async function TestSpawnNotes() {
         const midi = await Midi.fromUrl("../../TEST/test.mid");
         const notes: any[] = []
 
         let audio = new Audio('../../TEST/test.wav')
-        setTimeout(() => audio.play(), 2500)
+        //setTimeout(() => audio.play(), (initDistance/fallSpeed)*4 - midi.tracks[0].notes[0].time*1000)
 
         midi.tracks.forEach(track => {
             track.notes.forEach(note => {
-                setTimeout(() => {
-                    notes.push(spawnNotes(note.midi, note.duration * 10));
-                }, note.time * 1000)
+                notes.push(spawnNote(note));
             })
         })
+
+        setTimeout(() => audio.play(), countdownSeconds*1000)
 
         setInterval(() => {
             let i = notes.length
             while (i--) {
                 let { mesh, note } = notes[i]
-                mesh.position.z += 0.01
+                mesh.position.z += fallSpeed/250
 
                 //if (mesh.position.z - mesh.scale.z/2) {
                     //if (playerHoldingNotes.includes(note)) {
                     //    console.log("yay")
                     //}
                 //}
-
+                
                 if (mesh.position.z > 0) {
                     scene.remove(mesh)
                     notes.splice(i, 1)
