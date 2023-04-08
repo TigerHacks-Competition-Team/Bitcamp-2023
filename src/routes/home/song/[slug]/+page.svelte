@@ -14,6 +14,7 @@
     let keyboardMesh : Group;
     let material : MeshPhysicalMaterial;
     let scene : Scene;
+    let playerHoldingNotes: any[];
 
     const noteOnRotation = 95 * Math.PI / 180;
     const noteOffRotation = 90 * Math.PI / 180;
@@ -45,11 +46,15 @@
                     keyboardSkeleton.children[noteBone].rotation.x = 
                         noteOnRotation;
                     (keyboardMesh.children[noteMesh] as SkinnedMesh).material = highlightedNoteMat;
+
+                    playerHoldingNotes.push(data[1])
                 }
                 if (data[0] === 128) {
                     keyboardSkeleton.children[noteBone].rotation.x = 
                         noteOffRotation;
-                    (keyboardMesh.children[noteMesh] as SkinnedMesh).material = material;  
+                    (keyboardMesh.children[noteMesh] as SkinnedMesh).material = material; 
+                    
+                    playerHoldingNotes.splice(playerHoldingNotes.indexOf(data[1]), 1)
                 }
             }
         }
@@ -114,6 +119,7 @@
                 obj.scale.x = 0.005;
                 obj.scale.y = 0.005;
                 obj.scale.z = 0.005;
+                obj.position.z = 0.5
                 
                 obj.traverse((child) => {
                     if ((child as Mesh).isMesh) {
@@ -121,7 +127,7 @@
                     }
                 });
 
-                TestSpawnNotes();
+                //TestSpawnNotes();
             }
         );
 
@@ -155,43 +161,61 @@
         }))
     }
     
-    function spawnNotes(note: number, duration: number) {
+    function spawnNote(note: any) {
         let cube = new THREE.Mesh(cubeGeo, highlightedNoteMat);
 
-        let noteBone = keyboardSkeleton.children[getNoteBone(note)];
+        let noteBone = keyboardSkeleton.children[getNoteBone(note.midi)];
         noteBone.getWorldPosition(cube.position);
         noteBone.getWorldScale(cube.scale);
 
-        cube.scale.z = duration;
-        cube.position.z -= 5;
+        cube.scale.z = (note.duration * fallSpeed);
+        cube.position.z = (-note.time * fallSpeed) + (countdownSeconds * fallSpeed);
         scene.add(cube);
 
-        let interval = setInterval(() => {
-            cube.position.z += 0.05;
-
-            if (cube.position.z > 0) {
-                clearInterval(interval);
-                scene.remove(cube);
-
-            }
-        }, 0)
+        return {mesh: cube, note: note}
     }
+
+    const fallSpeed = 2.5
+    const countdownSeconds = 3
 
     async function TestSpawnNotes() {
         const midi = await Midi.fromUrl("../../TEST/test.mid");
+        const notes: any[] = []
+
+        let audio = new Audio('../../TEST/test.wav')
+        //setTimeout(() => audio.play(), (initDistance/fallSpeed)*4 - midi.tracks[0].notes[0].time*1000)
 
         midi.tracks.forEach(track => {
             track.notes.forEach(note => {
-                setTimeout(() => {
-                    spawnNotes(note.midi, note.duration * 10);
-                }, note.time * 100)
+                notes.push(spawnNote(note));
             })
         })
+
+        setTimeout(() => audio.play(), countdownSeconds*1000)
+
+        setInterval(() => {
+            let i = notes.length
+            while (i--) {
+                let { mesh, note } = notes[i]
+                mesh.position.z += fallSpeed/250
+
+                //if (mesh.position.z - mesh.scale.z/2) {
+                    //if (playerHoldingNotes.includes(note)) {
+                    //    console.log("yay")
+                    //}
+                //}
+                
+                if (mesh.position.z > 0) {
+                    scene.remove(mesh)
+                    notes.splice(i, 1)
+                }
+            }
+        }, 0)
     }
 </script>
 
 <div bind:this={gameContainer}>
 
 </div>
-<button on:click={TestAutoPlay}>Test</button>
+<button on:click={TestSpawnNotes}>Test</button>
 
