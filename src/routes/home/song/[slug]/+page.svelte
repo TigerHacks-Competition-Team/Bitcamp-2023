@@ -5,26 +5,34 @@
     import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 	import type { Group, Mesh, SkinnedMesh } from 'three/src/Three';
 
+    import MidiPlayer from 'midi-player-js'
+
     let gameContainer : HTMLDivElement;
     let keyboardSkeleton : Group;
     let keyboardMesh : Group;
+
+    const noteRotation = 95 * Math.PI / 180
+
+    function getNoteBone(i: number) {
+        return keyboardSkeleton.children.findIndex(bone => {
+            return bone.name === `key${String(i - 9).padStart(2, '0')}`;
+        })
+    }
 
     function onMIDISuccess(midiAccess : MIDIAccess) {
         for (const input of midiAccess.inputs) {
             input[1].onmidimessage = (msg) => {
                 console.log(keyboardMesh)
                 let data = (msg as MIDIMessageEvent).data;
-                let noteBone = keyboardSkeleton.children.findIndex(bone => {
-                    return bone.name === `key${String(data[1] - 9).padStart(2, '0')}`;
-                })
+                let noteBone = getNoteBone(data[1])
 
                 if (data[0] === 144) {
                     keyboardSkeleton.children[noteBone].rotation.x = 
-                        95 * Math.PI / 180;
+                        noteRotation;
                 }
                 if (data[0] === 128) {
                     keyboardSkeleton.children[noteBone].rotation.x = 
-                        90 * Math.PI / 180;
+                        noteRotation;
                 }
             }
         }
@@ -104,12 +112,26 @@
         }
 
         animate();
-    });
 
+        //create a synth and connect it to the main output (your speakers)
+    });
+    
+    function test() {
+        let test = new MidiPlayer.Player(e => {
+            if (e.name === "Note on") {
+                console.log(e.noteName)
+                keyboardSkeleton.children[getNoteBone(e.noteNumber)].rotation.x = noteRotation
+            }
+        })
+        fetch("../../TEST/test.mid").then(e => e.arrayBuffer().then(e => {
+            test.loadArrayBuffer(e)
+            test.play()
+        }))
+    }
 </script>
 
 <div bind:this={gameContainer}>
 
 </div>
-
+<button on:click={test}>Test</button>
 

@@ -27,6 +27,7 @@
 	"dependencies": {
 		"firebase": "^9.19.1",
 		"firebaseui": "^6.0.2",
+		"midi-player-js": "^2.0.16",
 		"three": "^0.151.3"
 	}
 }
