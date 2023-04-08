@@ -3,16 +3,21 @@
 	import { onMount } from 'svelte';
     import * as THREE from 'three';
     import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
-	import type { Group, Mesh, SkinnedMesh } from 'three/src/Three';
+	import type { Group, Mesh, MeshPhysicalMaterial, SkinnedMesh } from 'three/src/Three';
 
     import MidiPlayer from 'midi-player-js'
+    import MidiParser from 'midi-parser-js'
 
     let gameContainer : HTMLDivElement;
     let keyboardSkeleton : Group;
     let keyboardMesh : Group;
+    let material : MeshPhysicalMaterial;
 
-    const noteOnRotation = 95 * Math.PI / 180
-    const noteOffRotation = 90 * Math.PI / 180
+    const noteOnRotation = 95 * Math.PI / 180;
+    const noteOffRotation = 90 * Math.PI / 180;
+    const highlightedNoteMat = new THREE.MeshStandardMaterial({
+        color: "red"
+    })
 
     function getNoteBone(i: number) {
         return keyboardSkeleton.children.findIndex(bone => {
@@ -20,20 +25,28 @@
         })
     }
 
+    function getNoteMesh(i: number) {
+        return keyboardMesh.children.findIndex(mesh => {
+            return mesh.name === `key${String(i - 9).padStart(2, '0')}`;
+        })
+    }
+
     function onMIDISuccess(midiAccess : MIDIAccess) {
         for (const input of midiAccess.inputs) {
             input[1].onmidimessage = (msg) => {
-                console.log(keyboardMesh)
                 let data = (msg as MIDIMessageEvent).data;
-                let noteBone = getNoteBone(data[1])
+                let noteBone = getNoteBone(data[1]);
+                let noteMesh = getNoteMesh(data[1]);
 
                 if (data[0] === 144) {
                     keyboardSkeleton.children[noteBone].rotation.x = 
                         noteOnRotation;
+                    (keyboardMesh.children[noteMesh] as SkinnedMesh).material = highlightedNoteMat;
                 }
                 if (data[0] === 128) {
                     keyboardSkeleton.children[noteBone].rotation.x = 
                         noteOffRotation;
+                    (keyboardMesh.children[noteMesh] as SkinnedMesh).material = material;  
                 }
             }
         }
@@ -43,7 +56,10 @@
         navigator.requestMIDIAccess().then(
             onMIDISuccess,
             (err) => {console.error(`Failed to get MIDI access - ${err}`)}
-        )
+        );
+
+        TestSpawnNotes();
+
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(
             45, 
@@ -76,7 +92,7 @@
         const fbxLoader = new FBXLoader();
         const textureLoader = new THREE.TextureLoader();
 
-        const material = new THREE.MeshPhysicalMaterial({  
+        material = new THREE.MeshPhysicalMaterial({  
             map: textureLoader.load(
                 "../../textures/keys_low_Material_BaseColor.png"
             ),
@@ -113,17 +129,21 @@
         }
 
         animate();
-
-        //create a synth and connect it to the main output (your speakers)
     });
     
-    function test() {
+    function TestAutoPlay() {
         let test = new MidiPlayer.Player(e => {
+            let noteBone = getNoteBone(e.noteNumber);
+            let noteMesh = getNoteMesh(e.noteNumber);
             if (e.name === "Note on") {
-                keyboardSkeleton.children[getNoteBone(e.noteNumber)].rotation.x = noteOnRotation
+                keyboardSkeleton.children[noteBone].rotation.x = 
+                    noteOnRotation;
+                (keyboardMesh.children[noteMesh] as SkinnedMesh).material = highlightedNoteMat;
             }
             if (e.name === "Note off") {
-                keyboardSkeleton.children[getNoteBone(e.noteNumber)].rotation.x = noteOffRotation
+                keyboardSkeleton.children[noteBone].rotation.x = 
+                    noteOffRotation;
+                (keyboardMesh.children[noteMesh] as SkinnedMesh).material = material;
             }
         })
         fetch("../../TEST/test.mid").then(e => e.arrayBuffer().then(e => {
@@ -131,10 +151,22 @@
             test.play()
         }))
     }
+
+    function TestSpawnNotes() {
+        fetch("../../TEST/test.mid").then(e => e.blob().then(blob => {
+            let reader = new FileReader();
+            reader.onload = (() => {
+                let midiArray = MidiParser.parse(reader.result);
+                console.log(midiArray);
+            });
+            reader.readAsDataURL(blob);
+            
+        }))
+    }
 </script>
 
 <div bind:this={gameContainer}>
 
 </div>
-<button on:click={test}>Test</button>
+<button on:click={TestAutoPlay}>Test</button>
 
