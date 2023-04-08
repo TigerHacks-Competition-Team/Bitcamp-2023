@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from 'firebase/auth';
 import { writable } from "svelte/store";
+import { onMount } from 'svelte'
 
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_APIKEY,
@@ -11,8 +12,9 @@ const firebaseConfig = {
     appId: "1:674372391347:web:30a95f426d836031a2fbc6"
 };
 
+export const user = writable()
+
 const app = initializeApp(firebaseConfig);
-export const user = writable(getAuth().currentUser)
 
 getAuth().onAuthStateChanged((u) => {
     user.set(u)
