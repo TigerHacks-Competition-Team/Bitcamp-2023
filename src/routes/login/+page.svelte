@@ -1,18 +1,10 @@
 <script lang="ts">
+    import { onMount } from 'svelte'
     import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-    import { initializeApp } from "firebase/app";
+    import { user } from '../stores'
 
-    const firebaseConfig = {
-        apiKey: import.meta.env.VITE_APIKEY,
-        authDomain: "bitcamp-2023.firebaseapp.com",
-        projectId: "bitcamp-2023",
-        storageBucket: "bitcamp-2023.appspot.com",
-        messagingSenderId: "674372391347",
-        appId: "1:674372391347:web:30a95f426d836031a2fbc6"
-    };
-
-    const app = initializeApp(firebaseConfig);
-
+    onMount(() => user.subscribe(console.log))
+ 
     let email : string;
     let password : string;
 
