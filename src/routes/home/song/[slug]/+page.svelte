@@ -6,13 +6,25 @@
 	import type { Group, Mesh, SkinnedMesh } from 'three/src/Three';
 
     let gameContainer : HTMLDivElement;
-    let keyboard : Group;
+    let keyboardSkeleton : Group;
+    let keyboardMesh : Group;
 
     function onMIDISuccess(midiAccess : MIDIAccess) {
         for (const input of midiAccess.inputs) {
-            input[1].onmidimessage = ({ data: [status, note, velocity] }) => {
-                if (status === 144 && keyboard) {
-                    
+            input[1].onmidimessage = (msg) => {
+                console.log(keyboardMesh)
+                let data = (msg as MIDIMessageEvent).data;
+                let noteBone = keyboardSkeleton.children.findIndex(bone => {
+                    return bone.name === `key${String(data[1] - 9).padStart(2, '0')}`;
+                })
+
+                if (data[0] === 144) {
+                    keyboardSkeleton.children[noteBone].rotation.x = 
+                        95 * Math.PI / 180;
+                }
+                if (data[0] === 128) {
+                    keyboardSkeleton.children[noteBone].rotation.x = 
+                        90 * Math.PI / 180;
                 }
             }
         }
@@ -54,20 +66,24 @@
 
         const fbxLoader = new FBXLoader();
         const textureLoader = new THREE.TextureLoader();
-        const keysBaseColor = textureLoader.load("../../textures/keys_low_Material_BaseColor.png");
-        const keysNormal = textureLoader.load("../../textures/keys_low_Material_Normal.png");
-        const keyRoughness = textureLoader.load("../../textures/keys_low_Material_Roughness.png");
 
         const material = new THREE.MeshPhysicalMaterial({  
-            map: keysBaseColor,
-            normalMap: keysNormal,
-            roughnessMap: keyRoughness
+            map: textureLoader.load(
+                "../../textures/keys_low_Material_BaseColor.png"
+            ),
+            normalMap: textureLoader.load(
+                "../../textures/keys_low_Material_Normal.png"
+            ),
+            roughnessMap: textureLoader.load(
+                "../../textures/keys_low_Material_Roughness.png"
+            ),
         });
 
         fbxLoader.load(
             "../../meshes/keys.fbx",
             (obj) => {
-                keyboard = obj;
+                keyboardSkeleton = <Group>obj.getObjectByName("Armature");
+                keyboardMesh = obj;
                 scene.add(obj);
                 obj.scale.x = 0.005;
                 obj.scale.y = 0.005;
@@ -83,10 +99,7 @@
 
         function animate() {
 	        requestAnimationFrame( animate );
-            if (keyboard) {
-                
-            }
-        
+
 	        renderer.render( scene, camera );
         }
 
