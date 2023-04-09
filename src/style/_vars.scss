@@ -1,4 +1,4 @@
-@use "bulma/sass/utilities/all.sass" as defaults;
+@use "bulma/sass/utilities/all" as defaults;
 
 $family-primary: "Whyte";
 $family-secondary: "Whyte Inktrap";
@@ -7,9 +7,11 @@ $primary: #FFA3A5;
 $primary-pink: #FF69EB;
 $primary-yellow: #FFDC5E;
 $secondary: #707ee9;
+$secondary-light: #8591F1;
 
 $text-light: white;
-$text-dim: rgba(255, 255, 255, 0.8);
+$text-dim: rgba(255, 255, 255, 0.85);
+$text-dimmer: rgba(255, 255, 255, 0.75);
 
 $radius: 10px;
 

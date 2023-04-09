@@ -6,10 +6,10 @@
 		button?.addEventListener("click", () => {
 			button.classList.toggle("is-active");
 			button.parentElement?.parentElement?.children[1]?.classList.toggle("is-active");
-            // toggle is-inactive on the main navbar because even though it's not in bulma, that way
-            // I can add custom styles to make the entire thing have a bg
-            // it's inactive instead of active because it needs to have the style by default, or
-            // else A11Y yells at me and it doesn't work
+			// toggle is-inactive on the main navbar because even though it's not in bulma, that way
+			// I can add custom styles to make the entire thing have a bg
+			// it's inactive instead of active because it needs to have the style by default, or
+			// else A11Y yells at me and it doesn't work
 			button.parentElement?.parentElement?.classList.toggle("is-inactive");
 		});
 	});
@@ -65,13 +65,25 @@
 			color: $secondary;
 		}
 
-        // remove drop shadow from dropdown
-        .navbar-menu {
-            box-shadow: none;
-        }
+		&:not(.is-inactive) {
+			background-color: rgba(0, 0, 0, 0.1);
+			// use box shadow to fade out background
+			.navbar-menu {
+				box-shadow: 0px 50px 50px 0px rgba(0, 0, 0, 0.1);
+			}
+		}
 
-        &:not(.is-inactive) {
-            background-color: rgba(0, 0, 0, 0.05);
-        }
+		// make burger bigger
+		.navbar-burger span {
+			height: 2px;
+			width: 20px;
+
+			&:nth-child(1) {
+				top: calc(50% - 8px);
+			}
+			&:nth-child(3) {
+				top: calc(50% + 6px);
+			}
+		}
 	}
 </style>

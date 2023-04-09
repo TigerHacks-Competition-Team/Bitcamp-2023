@@ -10,7 +10,9 @@
 	width: 100vw;
 	height: 100vh;
     // this is the fallback colors, the animated background's starting point looks vaguely like this
-    background: linear-gradient(to bottom right, #FFB3AA, #FF9AAB, #FF93AD, #FFA6B2, #FFC2B8, #FFC4AF, #FFBCBF, #FFA4BB, #FF98AC, #FF939F, #FF9999, #FFAB95)
+    background: linear-gradient(to bottom right, #FFB3AA, #FF9AAB, #FF93AD, #FFA6B2, #FFC2B8, #FFC4AF, #FFBCBF, #FFA4BB, #FF98AC, #FF939F, #FF9999, #FFAB95);
+	// angle it
+	clip-path: polygon(0% 0%, 100% 0%, 100% calc(75% - 20vw), 0% 100%);
 }
 
 .simple-button {
@@ -30,5 +32,36 @@
 
 	&:focus {
 		box-shadow: 0 0 0 0.125em rgba($text-light, 0.25);
+	}
+}
+
+.title {
+	// the big titles on the main page
+	&.main {
+		font-size: 4rem;
+		color: $text-dim;
+		&:first-child {
+			margin-bottom: 0;
+		}
+	}
+
+	&.is-special {
+		color: $secondary-light;
+	}
+}
+.subtitle {
+	color: $text-dimmer;
+	max-width: 50vh;
+}
+
+// add extra top margin to the first section, relative to how much teh screen can fit
+.section:first-of-type {
+	margin-top: max(0px, 50vh - 25em);
+}
+
+@include defaults.tablet {
+	.section.is-thin {
+		margin-left: 7.5em;
+		margin-right: 7.5em;
 	}
 }
