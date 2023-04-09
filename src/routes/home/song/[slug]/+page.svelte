@@ -8,6 +8,8 @@
 	import { getStorage, ref, getDownloadURL } from "firebase/storage";
 	import { app } from "../../../stores";
 
+	import { fly, fade } from 'svelte/transition'
+
 	import '../../../../style/menu.scss'
 
 	import { Midi } from "@tonejs/midi";
@@ -25,12 +27,21 @@
 	const testMat = new THREE.MeshStandardMaterial({
         color: "red"
     });
-	const plane = new THREE.Plane( new THREE.Vector3( 0, 0, 0 ), 0 );
 
 	const noteOnRotation = (95 * Math.PI) / 180;
 	const noteOffRotation = (90 * Math.PI) / 180;
 	const highlightedNoteMat = new THREE.MeshStandardMaterial({
 		color: 0x4287f5,
+		emissive: "white",
+		emissiveIntensity: 0.2,
+	});
+	const highlightedNoteMatGood = new THREE.MeshStandardMaterial({
+		color: 0x61e84d,
+		emissive: "white",
+		emissiveIntensity: 0.2,
+	});
+	const highlightedNoteMatBad = new THREE.MeshStandardMaterial({
+		color: 0xf54636,
 		emissive: "white",
 		emissiveIntensity: 0.2,
 	});
@@ -57,7 +68,8 @@
 
 				if (data[0] === 144) {
 					keyboardSkeleton.children[noteBone].rotation.x = noteOnRotation;
-					(keyboardMesh.children[noteMesh] as SkinnedMesh).material = highlightedNoteMat;
+					(keyboardMesh.children[noteMesh] as SkinnedMesh).material = 
+						(currentKeys.includes(data[1])) ? highlightedNoteMatGood : highlightedNoteMatBad;
 					heldKeys.push(data[1]);
                 }
                 if (data[0] === 128) {
@@ -182,7 +194,7 @@
 		noteBone.getWorldPosition(cube.position);
 		noteBone.getWorldScale(cube.scale);
 
-		cube.scale.z = note.duration * fallSpeed * 3;
+		cube.scale.z = note.duration * fallSpeed * 5;
 		cube.position.z = -note.time * fallSpeed - countdownSeconds * fallSpeed;
 		cube.position.y -= 0.01;
 		scene.add(cube);
@@ -218,10 +230,15 @@
 		});
 
 		countdown = true
-		setTimeout(() => {
-			audio.play()
-			countdown = false
-		}, (countdownSeconds * 1000) / audio.playbackRate);
+		let countdownTick = 0
+		let countdownInterval = setInterval(() => {
+			if (!paused) countdownTick += audio.playbackRate
+			if (countdownTick > countdownSeconds * updatesPerSeconds) {
+				audio.play()
+				countdown = false
+				clearInterval(countdownInterval)
+			}
+		}, msPerUpdate)
 
 		setInterval(() => {
 			if (paused) return
@@ -233,10 +250,9 @@
                 mesh.position.z += unitsPerUpdate * audio.playbackRate;
 
 				if (mesh.position.z < 0.05 && mesh.position.z > -0.05 ) {
-					mesh.material = testMat;
 					currentKeys.push(note.midi);
 				} else if (mesh.position.z > 0.05 && mesh.position.z < 0.1) {
-					mesh.material = highlightedNoteMat;
+					
 				}
 
                 if (mesh.position.z > 0.25) {
@@ -266,19 +282,19 @@
 	function togglePauseMenu() {
 		if (!started) return
 		paused = !paused
-		audio[(!paused && audio.played ? "play" : "pause")]()
+		audio[(!paused && !countdown ? "play" : "pause")]()
 	}
 </script>
 
 <svelte:window on:keypress={e => {if (e.key === 'p') togglePauseMenu()}}/>
 
 {#if (paused || !started)}
-<div class="pause-menu game-ui">
+<div class="pause-menu game-ui" transition:fade={{duration: 100}}>
 	{#if started}
 		<label>Volume</label>
 		<input value={audio.volume*100} min="0" max="100" on:input={volumeChanged} type="range"/>
 		<label>Speed</label>
-		<input value={audio.playbackRate*100} min="50" max="200" on:input={speedChanged} type="range" disabled={countdown}/>
+		<input value={audio.playbackRate*100} min="50" max="200" on:input={speedChanged} type="range"/>
 	{:else}
 		<button on:click={beginGame} disabled={!loaded}>Start</button>
 		{#if loadingError} <p>Error Loading Data!</p> <p>{loadingError.message}</p> {/if}
