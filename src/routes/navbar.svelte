@@ -1,0 +1,77 @@
+<script lang="ts">
+	import { onMount } from "svelte";
+
+	onMount(() => {
+		const button = document.getElementById("navbar-button");
+		button?.addEventListener("click", () => {
+			button.classList.toggle("is-active");
+			button.parentElement?.parentElement?.children[1]?.classList.toggle("is-active");
+            // toggle is-inactive on the main navbar because even though it's not in bulma, that way
+            // I can add custom styles to make the entire thing have a bg
+            // it's inactive instead of active because it needs to have the style by default, or
+            // else A11Y yells at me and it doesn't work
+			button.parentElement?.parentElement?.classList.toggle("is-inactive");
+		});
+	});
+</script>
+
+<nav class="navbar is-inactive" id="navbar">
+	<div class="navbar-brand">
+		<a href="/" class="navbar-item">Playright</a>
+		<!-- svelte-ignore a11y-missing-attribute -->
+		<a
+			class="navbar-burger"
+			role="button"
+			aria-label="menu"
+			aria-expanded="false"
+			id="navbar-button">
+			<span aria-hidden="true" />
+			<span aria-hidden="true" />
+			<span aria-hidden="true" />
+		</a>
+	</div>
+
+	<div id="navbar-contents" class="navbar-menu">
+		<div class="navbar-end">
+			<a href="#about" class="navbar-item">About</a>
+			<div class="navbar-item">
+				<a href="#login" class="simple-button">Log In</a>
+			</div>
+		</div>
+	</div>
+</nav>
+
+<style lang="scss">
+	@use "bulma/sass/utilities/all" as defaults;
+	@import "../style/vars";
+
+	// navbar
+	#navbar {
+		font-family: $family-secondary;
+
+		// links
+		a {
+			font-size: 1.25em;
+			color: $text-light;
+
+			&.simple-button {
+				color: $primary;
+			}
+		}
+		// main title
+		.navbar-brand a:first-child {
+			font-size: 2em;
+			font-weight: bold;
+			color: $secondary;
+		}
+
+        // remove drop shadow from dropdown
+        .navbar-menu {
+            box-shadow: none;
+        }
+
+        &:not(.is-inactive) {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+	}
+</style>
