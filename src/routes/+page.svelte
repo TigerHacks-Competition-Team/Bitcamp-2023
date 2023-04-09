@@ -34,7 +34,7 @@
 </div>
 
 <div class="section is-thin">
-	<div class="columns">
+	<div class="columns is-desktop">
 		<div class="column">
 			<img src="/img/demo-temp.png" alt="Demo" id="demo" />
 		</div>
@@ -79,4 +79,36 @@
 			<use xlink:href="#gentle-wave" x="48" y="7" stroke="rgba(0,0,0,1)" fill="transparent" />
 		</g>
 	</svg>
+</div>
+
+<div id="fancy-footer">
+	<Background id="footer-bg" />
+	<div id="get-started">
+		<div class="corners" />
+		<h1 class="title is-1 has-text-centered is-special main">Get Started</h1>
+		<div id="get-started-input">
+			<input type="text" class="input" placeholder="Enter your email..." />
+			<button>GO</button>
+		</div>
+	</div>
+	<div class="footer">
+		<div class="columns">
+			<div class="column">
+				<h1 class="title is-1 is-special">Playright</h1>
+				<h3 class="subtitle is-3">Lorem ipsum dolor sit amet.</h3>
+			</div>
+			<div class="column">
+				<p>
+					Built with <a href="https://svelte.dev">Svelte</a>, <a href="https://bulma.io">Bulma</a>,
+					& <a href="https://threejs.org">Three.js</a>
+				</p>
+				<p>
+					Powered by with <a href="https://firebase.google.com">Firebase</a>,
+					<a href="https://cloud.google.com/kubernetes-engine/">Google Cloud Kubernetes Engine</a>,
+					<a href="https://github.com/deezer/spleeter">Spleeter</a>, &
+					<a href="https://basicpitch.spotify.com/">Basic Pitch</a>
+				</p>
+			</div>
+		</div>
+	</div>
 </div>

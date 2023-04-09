@@ -20,7 +20,7 @@
 		blue: 235,
 	};
 	export let shiftStrength = 3;
-	export let id: string;
+	export let id: string | null = null;
 
 	// this takes a red, green, or blue value, along with the key for which one it is
 	function shiftColorValueToRange(value: number, valueKey: "red" | "green" | "blue") {
@@ -86,3 +86,11 @@
 </script>
 
 <canvas {id} bind:this={canv} {width} {height} />
+
+<style lang="scss">
+	@import "../style/vars";
+	
+	canvas {
+		background: $magic-gradient;
+	}
+</style>
