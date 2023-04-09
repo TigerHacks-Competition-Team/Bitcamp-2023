@@ -5,6 +5,8 @@
 	import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 	import type { Group, Mesh, MeshPhysicalMaterial, Scene, SkinnedMesh } from "three/src/Three";
 
+	import '../../../../style/menu.scss'
+
 	import MidiPlayer from "midi-player-js";
 	import MidiParser from "midi-parser-js";
 	import { Midi } from "@tonejs/midi";
@@ -64,7 +66,7 @@
 		navigator.requestMIDIAccess().then(onMIDISuccess, err => {
 			console.error(`Failed to get MIDI access - ${err}`);
 		});
-
+		
 		scene = new THREE.Scene();
 		const camera = new THREE.PerspectiveCamera(
 			20,
@@ -72,7 +74,7 @@
 			0.1,
 			1000
 		);
-
+		
 		//scene.add(new THREE.AxesHelper(5));
 		scene.background = new THREE.Color(0x1c1c1c);
 
@@ -83,10 +85,10 @@
 		camera.position.x = 0.4;
 		camera.position.y = 9;
 		camera.position.z = 4.5;
-
+		
 		camera.rotation.x = -1;
 		camera.rotation.y = 0;
-
+		
 		const renderer = new THREE.WebGLRenderer();
 		renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -96,13 +98,13 @@
 
 		const fbxLoader = new FBXLoader();
 		const textureLoader = new THREE.TextureLoader();
-
+		
 		material = new THREE.MeshPhysicalMaterial({
 			map: textureLoader.load("../../textures/keys_low_Material_BaseColor.png"),
 			normalMap: textureLoader.load("../../textures/keys_low_Material_Normal.png"),
 			roughnessMap: textureLoader.load("../../textures/keys_low_Material_Roughness.png"),
 		});
-
+		
 		fbxLoader.load("../../meshes/keys.fbx", obj => {
 			keyboardSkeleton = <Group>obj.getObjectByName("Armature");
 			keyboardMesh = obj;
@@ -117,19 +119,21 @@
 					(child as Mesh).material = material;
 				}
 			});
-
+			
 			//TestSpawnNotes();
 		});
-
+		
 		function animate() {
 			requestAnimationFrame(animate);
-
+			
 			renderer.render(scene, camera);
 		}
-
+		
 		animate();
+		
+		audio = new Audio("../../TEST/test.mp3");
 	});
-
+	
 	function TestAutoPlay() {
 		let test = new MidiPlayer.Player(e => {
 			let noteBone = getNoteBone(e.noteNumber);
@@ -167,16 +171,17 @@
 
 	const fallSpeed = 1; // Units per second
 	const countdownSeconds = 3; // Seconds
-	const updatesPerSeconds = 50;
+	const updatesPerSeconds = 30;
 
 	const msPerUpdate = (1 / updatesPerSeconds) * 1000;
 	const unitsPerUpdate = fallSpeed / updatesPerSeconds;
 
+	let audio: HTMLAudioElement
+	let playing = false
+
 	async function TestSpawnNotes() {
 		const midi = await Midi.fromUrl("../../TEST/test.mid");
 		const notes: any[] = [];
-
-		let audio = new Audio("../../TEST/test.mp3");
 
 		midi.tracks.forEach(track => {
 			track.notes.forEach(note => {
@@ -185,13 +190,16 @@
 			});
 		});
 
-		setTimeout(() => audio.play(), countdownSeconds * 1000);
+		setTimeout(() => {
+			audio.play()
+			playing = true
+		}, countdownSeconds * 1000);
 
 		setInterval(() => {
 			let i = notes.length;
 			while (i--) {
 				let { mesh, note } = notes[i];
-				mesh.position.z += unitsPerUpdate;
+				mesh.position.z += unitsPerUpdate * audio.playbackRate;
 
 				if (mesh.position.z > 0) {
 					scene.remove(mesh);
@@ -200,7 +208,19 @@
 			}
 		}, msPerUpdate);
 	}
+
+	function volumeChanged(e: Event) {
+		audio.volume = parseInt((e.target as HTMLInputElement).value) / 100
+	}
+
+	function speedChanged(e: Event) {
+		audio.playbackRate = parseInt((e.target as HTMLInputElement).value) / 100
+	}
 </script>
 
+<div class="game-menu">
+	<input value="100" min="0" max="100" on:input={volumeChanged} type="range"/>
+	<input value="100" min="20" max="200" on:input={speedChanged} type="range" disabled={!playing}/>
+	<button on:click={TestSpawnNotes}>Test</button>
+</div>
 <div bind:this={gameContainer} />
-<button on:click={TestSpawnNotes}>Test</button>
