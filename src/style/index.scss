@@ -9,8 +9,6 @@
 	z-index: -1000;
 	width: 100vw;
 	height: 100vh;
-    // this is the fallback colors, the animated background's starting point looks vaguely like this
-    background: linear-gradient(to bottom right, #FFB3AA, #FF9AAB, #FF93AD, #FFA6B2, #FFC2B8, #FFC4AF, #FFBCBF, #FFA4BB, #FF98AC, #FF939F, #FF9999, #FFAB95);
 	// angle it
 	clip-path: polygon(0% 0%, 100% 0%, 100% calc(75% - 20vw), 0% 100%);
 }
@@ -36,6 +34,8 @@
 }
 
 .title {
+	font-family: $family-secondary;
+
 	// the big titles on the main page
 	&.main {
 		font-size: 4rem;
@@ -45,23 +45,215 @@
 		}
 	}
 
-	&.is-special {
+	&.is-special, .is-special {
 		color: $secondary-light;
 	}
 }
 .subtitle {
-	color: $text-dimmer;
-	max-width: 50vh;
+	&.main {
+		color: $text-dimmer;
+		max-width: 50vh;
+	}
 }
 
 // add extra top margin to the first section, relative to how much teh screen can fit
+// also, make it the height of the background
 .section:first-of-type {
 	margin-top: max(0px, 50vh - 25em);
+	// 3.25rem is default navbar height, 6rem is .section vertical padding
+	min-height: calc(100vh - 3.25rem - 6rem);
+}
+// make the first section shorter if the navbar is expanded
+#navbar:not(.is-inactive) + .section {
+	min-height: calc(100vh - 6.5rem - 6rem);
 }
 
 @include defaults.tablet {
+	.section {
+		margin-left: 3rem;
+		margin-right: 3rem;
+	}
 	.section.is-thin {
-		margin-left: 7.5em;
-		margin-right: 7.5em;
+		margin-left: 7.5rem;
+		margin-right: 7.5rem;
+	}
+}
+
+.dots {
+	span {
+		display: inline-block;
+		width: 0.8em;
+		height: 0.8em;
+		border-radius: 1em;
+		background-color: $primary-pink;
+		margin: 0.1em;
+	}
+}
+
+.divider {
+	margin: 10rem 0;
+}
+
+// waves
+.waves {
+    height: 15vh;
+    width: 100%;
+    opacity: 0.3;
+
+	.parallax > use {
+		animation: move-forever 25s cubic-bezier(0.55, 0.5, 0.45, 0.5) infinite;
+	}
+	.parallax > use:nth-child(1) {
+		animation-delay: -2s;
+		animation-duration: 7s;
+	}
+	.parallax > use:nth-child(2) {
+		animation-delay: -3s;
+		animation-duration: 10s;
+	}
+	.parallax > use:nth-child(3) {
+		animation-delay: -4s;
+		animation-duration: 13s;
+	}
+	.parallax > use:nth-child(4) {
+		animation-delay: -5s;
+		animation-duration: 20s;
+	}
+}
+
+@keyframes move-forever {
+    0% {
+        transform: translate3d(-90px, 0, 0);
+    }
+    100% {
+        transform: translate3d(85px, 0, 0);
+    }
+}
+
+
+// bottom 'get started' / footer
+#fancy-footer {
+	position: relative;
+	#footer-bg {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		z-index: -1;
+	}
+
+	$footer-radius: 30px;
+	#get-started {
+		width: 100%;
+		height: 30rem;
+		padding: 0 10vw;
+		position: relative;
+		z-index: 2;
+	
+		&::before, &::after {
+			content: "";
+			position: absolute;
+			top: 0;
+			width: 10vw;
+			height: 100%;
+			background: defaults.$scheme-main;
+		}
+		&::before {
+			left: 0;
+			border-bottom-right-radius: $footer-radius;
+		}
+		&::after {
+			right: 0;
+			border-bottom-left-radius: $footer-radius;
+		}
+	
+		.corners {
+			height: 2em;
+			width: 100%;
+			z-index: 3;
+			position: relative;
+			margin-bottom: 2em;
+	
+			&::before, &::after {
+				content: "";
+				position: absolute;
+				top: 0;
+				height: 2em;
+				width: 2em;
+			}
+			&::before {
+				left: 0;
+				border-top-left-radius: 2em;
+				box-shadow: -1em -1em 0px 1em defaults.$scheme-main;
+			}
+			&::after {
+				right: 0;
+				border-top-right-radius: 2em;
+				box-shadow: 1em -1em 0px 1em defaults.$scheme-main;
+			}
+		}
+
+		#get-started-input {
+			width: 70%;
+			margin: auto 15%;
+			position: relative;
+
+			input, button {
+				font-size: 2.5em;
+				color: $text-dim;
+				background: none !important;
+				border: none !important;
+				box-shadow: none !important;
+				font-family: $family-secondary;
+				display: inline;
+				height: 1.5em;
+			}
+
+			input {
+				width: calc(100% - 3em);
+				padding: 0 0.25em;
+
+				&::placeholder {
+					color: $text-dim;
+				}
+			}
+
+			button {
+				display: inline;
+				width: max-content;
+				margin-top: -0.1em;
+				
+				font-size: 3em;
+				font-weight: bold;
+
+				cursor: pointer;
+			}
+
+			&::after {
+				content: "";
+				position: absolute;
+				left: 0;
+				bottom: -5px;
+				width: 100%;
+				height: 5px;
+				background-color: $text-dimmer;
+			}
+		}
+	}
+
+	.footer {
+		margin-left: 10vw;
+		margin-right: 10vw;
+		@include defaults.desktop {
+			margin-left: 20em;
+			margin-right: 20em;
+		}
+		background-color: transparent;
+
+		p {
+			font-size: 1.5em;
+			&:first-child {
+				margin-bottom: 0.5em;
+			}
+		}
 	}
 }

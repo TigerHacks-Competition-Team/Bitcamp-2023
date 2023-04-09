@@ -9,6 +9,12 @@ $primary-yellow: #FFDC5E;
 $secondary: #707ee9;
 $secondary-light: #8591F1;
 
+// this gradient acts as a fallback for the magic animated backgrounds
+// it imitates what they look like on frame 1
+$magic-gradient: linear-gradient(to bottom right, #FFB3AA, #FF9AAB, #FF93AD, #FFA6B2, #FFC2B8, #FFC4AF, #FFBCBF, #FFA4BB, #FF98AC, #FF939F, #FF9999, #FFAB95);
+
+$link: rgba($secondary, 0.8);
+
 $text-light: white;
 $text-dim: rgba(255, 255, 255, 0.85);
 $text-dimmer: rgba(255, 255, 255, 0.75);
