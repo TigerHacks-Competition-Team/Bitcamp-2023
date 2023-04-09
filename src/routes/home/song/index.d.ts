@@ -1,2 +1,2 @@
-declare module 'three';
-declare module 'midi-parser-js';
+declare module "three";
+declare module "midi-parser-js";
