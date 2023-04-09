@@ -35,7 +35,10 @@
 		<div class="navbar-end">
 			<a href="#about" class="navbar-item">About</a>
 			<div class="navbar-item">
-				<a href="#login" class="simple-button">Log In</a>
+				<a href="login" class="simple-button">Log In</a>
+			</div>
+			<div class="navbar-item">
+				<a href="signup" class="simple-button">Sign Up</a>
 			</div>
 		</div>
 	</div>
