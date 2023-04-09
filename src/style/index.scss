@@ -1,2 +1,11 @@
 @use "bulma/sass/utilities/all" as defaults;
 @import "vars";
+
+#background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1000;
+    width: 100vw;
+    height: 100vh;
+}
