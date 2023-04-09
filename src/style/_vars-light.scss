@@ -15,18 +15,9 @@ $magic-gradient: linear-gradient(to bottom right, #FFB3AA, #FF9AAB, #FF93AD, #FF
 
 $link: rgba($secondary, 0.8);
 
-$scheme-main: #262427;
-
-
-$text-strong: white;
-$text: rgba(white, 0.7);
-
-$text-light: $scheme-main;
-$text-dim: rgba($scheme-main, 0.85);
-$text-dimmer: rgba($scheme-main, 0.75);
-
-$text-transparent: rgba($scheme-main, 0.5);
-
+$text-light: white;
+$text-dim: rgba(255, 255, 255, 0.85);
+$text-dimmer: rgba(255, 255, 255, 0.75);
 
 $radius: 10px;
 

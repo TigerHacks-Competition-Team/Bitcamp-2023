@@ -49,7 +49,7 @@ body {
 	@include underlined(4px);
 
     &::after {
-        background-color: rgba(255, 255, 255, 0.5)
+        background-color: $text-transparent
     }
 
     &::before {
@@ -65,7 +65,7 @@ body {
         transform: scaleX(0);
         transform-origin: right;
         transition: transform 0.5s, color 0.2s;
-        background-color: white;
+        background-color: $scheme-main;
     }
 
     &:has(input:focus) {
