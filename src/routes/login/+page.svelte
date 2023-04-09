@@ -1,19 +1,18 @@
 <script lang="ts">
 	import {
 		createUserWithEmailAndPassword,
-		getAuth,
 		signInWithEmailAndPassword,
 	} from "firebase/auth";
 	import { onMount } from "svelte";
 	import Background from "./../background.svelte";
+	import { auth } from "../stores";
 
-	onMount(() => console.log(getAuth().currentUser));
+	onMount(() => console.log(auth.currentUser));
 
 	let email: string;
 	let password: string;
 
 	function login() {
-		const auth = getAuth();
 		signInWithEmailAndPassword(auth, email, password)
 			.then(userCredential => {
 				const user = userCredential.user;

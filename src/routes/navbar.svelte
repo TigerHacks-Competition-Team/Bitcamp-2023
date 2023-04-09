@@ -32,8 +32,11 @@
 	</div>
 
 	<div id="navbar-contents" class="navbar-menu">
-		<div class="navbar-end">
+        <div class="navbar-start">
 			<a href="#about" class="navbar-item">About</a>
+        </div>
+
+		<div class="navbar-end">
             <a href="/login" class="navbar-item">Log In</a>
 			<div class="navbar-item">
 				<a href="/signup" class="simple-button">Sign Up</a>
@@ -49,6 +52,7 @@
 	// navbar
 	#navbar {
 		font-family: $family-secondary;
+        padding: 0.75em 1em 0 1em;
 
 		// links
 		a {

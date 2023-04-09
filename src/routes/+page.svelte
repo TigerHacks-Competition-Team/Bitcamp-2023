@@ -36,7 +36,7 @@
 	</h3>
 </div>
 
-<div class="section is-thin">
+<div class="section is-thin" id="about">
 	<h1 class="title is-1 has-text-centered">
 		Learning the piano is hard. <span class="is-special">Seriously.</span>
 	</h1>

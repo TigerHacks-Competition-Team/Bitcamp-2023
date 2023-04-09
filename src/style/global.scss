@@ -1,6 +1,9 @@
 @use "bulma/sass/utilities/all" as defaults;
 @import "vars";
 
+html {
+	scroll-behavior: smooth;
+}
 body {
 	overflow-y: hidden;
 }
