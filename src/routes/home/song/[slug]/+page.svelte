@@ -4,7 +4,7 @@
 	import * as THREE from "three";
 	import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 	import type { Group, Mesh, MeshPhysicalMaterial, Scene, SkinnedMesh } from "three/src/Three";
-	import { getFirestore, doc, getDoc } from "firebase/firestore";
+	import { getFirestore, doc, getDoc, where, query, getDocs, collection, addDoc } from "firebase/firestore";
 	import { getStorage, ref, getDownloadURL } from "firebase/storage";
 	import { app } from "../../../stores";
 
@@ -72,7 +72,8 @@
     }
 
 	const storage = getStorage();
-	let midiDownloadUrl
+	const db = getFirestore(app);
+	let midiDownloadUrl : String;
 
 	onMount(async () => {
 		if (!app) {
@@ -80,7 +81,6 @@
 			return;
 		}
 
-		const db = getFirestore(app);
 		const docSnap = await getDoc(doc(db, "songs", $page.params.slug));
 		
 		midiDownloadUrl = await getDownloadURL(ref(storage, docSnap.data().midi))
@@ -246,6 +246,21 @@
 	function speedChanged(e: Event) {
 		audio.playbackRate = parseInt((e.target as HTMLInputElement).value) / 100
 	}
+
+	let testingValue = "";
+
+	async function TestingTest() {
+		const q = query(collection(db, "songs"), where("url", "==", testingValue));
+		const querySnapshot = await getDocs(q);
+		const docs = [];
+		querySnapshot.forEach(doc => {
+			docs.push(doc);
+		})
+		if (docs.length == 0) {
+			await addDoc(collection(db, "songs"), { url: testingValue });
+		} else {
+		}
+	}
 </script>
 
 <div class="game-menu">
@@ -266,6 +281,7 @@
 	<div class="player-meter">
 		<meter value={performance} max="100" min="0" low="20" high="60" optimum="80"></meter>
 	</div>
-	<button on:click={TestSpawnNotes}>Test</button>
+	<button on:click={TestingTest}>Test</button>
+	<input type="text" autocomplete="off" bind:value={testingValue}>
 </div>
 <div bind:this={gameContainer} />
