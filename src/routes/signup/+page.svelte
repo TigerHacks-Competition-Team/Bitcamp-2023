@@ -1,37 +1,14 @@
 <script lang="ts">
-	import {
-		createUserWithEmailAndPassword,
-		getAuth,
-		signInWithEmailAndPassword,
-	} from "firebase/auth";
-	import { onMount } from "svelte";
+	import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 	import Background from "../background.svelte";
+	import { page } from "$app/stores";
 
-	onMount(() => console.log(getAuth().currentUser));
-
-	let email: string;
+	let email: string | null = $page.url.searchParams.get("email");
 	let password: string;
 
-	function addUser() {
+	async function signUp() {
 		const auth = getAuth();
-		createUserWithEmailAndPassword(auth, email, password)
-			.then(userCredential => {
-				const user = userCredential.user;
-			})
-			.catch(console.log);
-	}
-
-	function login() {
-		const auth = getAuth();
-		signInWithEmailAndPassword(auth, email, password)
-			.then(userCredential => {
-				const user = userCredential.user;
-			})
-			.catch(console.log);
-	}
-
-	function logout() {
-		getAuth().signOut();
+		await createUserWithEmailAndPassword(auth, email as string, password);
 	}
 </script>
 
@@ -39,19 +16,21 @@
 <div id="login">
 	<h1 class="title is-1 has-text-centered main">Sign Up</h1>
 	<div class="underlined">
-		<input type="email" class="input clean-input underlined" placeholder="Email" bind:value={email}>
+		<input
+			type="email"
+			class="input clean-input underlined"
+			placeholder="Email"
+			bind:value={email} />
 	</div>
 	<div class="underlined">
-		<input type="password" class="input clean-input underlined" placeholder="Password" bind:value={password}>  
+		<input
+			type="password"
+			class="input clean-input underlined"
+			placeholder="Password"
+			bind:value={password} />
 	</div>
-	<button class="clean-button has-text-centered" on:click={addUser}>GO</button>
+	<button class="clean-button has-text-centered" on:click={signUp}>GO</button>
 </div>
-
-<!-- <input type="email" bind:value={email} />
-<input type="password" bind:value={password} />
-<button on:click={addUser}>Submit</button>
-<button on:click={logout}>Logout</button>
-<button on:click={login}>Login</button> -->
 
 <style lang="scss">
 	@import "../../style/vars";

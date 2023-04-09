@@ -12,15 +12,6 @@
 	let email: string;
 	let password: string;
 
-	function addUser() {
-		const auth = getAuth();
-		createUserWithEmailAndPassword(auth, email, password)
-			.then(userCredential => {
-				const user = userCredential.user;
-			})
-			.catch(console.log);
-	}
-
 	function login() {
 		const auth = getAuth();
 		signInWithEmailAndPassword(auth, email, password)
@@ -29,29 +20,27 @@
 			})
 			.catch(console.log);
 	}
-
-	function logout() {
-		getAuth().signOut();
-	}
 </script>
 
 <span id="background"><Background /></span>
 <div id="login">
 	<h1 class="title is-1 has-text-centered main">Log In</h1>
 	<div class="underlined">
-		<input type="email" class="input clean-input underlined" placeholder="Email" bind:value={email}>
+		<input
+			type="email"
+			class="input clean-input underlined"
+			placeholder="Email"
+			bind:value={email} />
 	</div>
 	<div class="underlined">
-		<input type="password" class="input clean-input underlined" placeholder="Password" bind:value={password}>  
+		<input
+			type="password"
+			class="input clean-input underlined"
+			placeholder="Password"
+			bind:value={password} />
 	</div>
 	<button class="clean-button has-text-centered" on:click={login}>GO</button>
 </div>
-
-<!-- <input type="email" bind:value={email} />
-<input type="password" bind:value={password} />
-<button on:click={addUser}>Submit</button>
-<button on:click={logout}>Logout</button>
-<button on:click={login}>Login</button> -->
 
 <style lang="scss">
 	@import "../../style/vars";

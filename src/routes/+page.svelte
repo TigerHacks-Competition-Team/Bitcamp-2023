@@ -4,17 +4,19 @@
 	import Background from "./background.svelte";
 	import { onMount } from "svelte";
 
+	let email: string;
+
 	function rotatePiano() {
 		const piano = document.getElementById("piano") as HTMLElement;
-		let rise = window.innerHeight - ((0.75 * window.innerHeight) - (0.2 * window.innerWidth));
+		let rise = window.innerHeight - (0.75 * window.innerHeight - 0.2 * window.innerWidth);
 		let run = window.innerWidth;
 		piano.style.transform = `rotateZ(${Math.atan(rise / run) * -(180 / Math.PI)}deg)`;
 	}
 
 	onMount(() => {
-		rotatePiano()
-		window.addEventListener("resize", rotatePiano)
-	})
+		rotatePiano();
+		window.addEventListener("resize", rotatePiano);
+	});
 </script>
 
 <svelte:head>
@@ -23,7 +25,7 @@
 
 <span id="background"><Background /></span>
 <Navbar />
-<img src="/img/piano.png" alt="" id="piano">
+<img src="/img/piano.png" alt="" id="piano" />
 
 <div class="section is-thin">
 	<h1 class="title is-1 main">Learning Piano.</h1>
@@ -84,9 +86,24 @@
 				d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
 		</defs>
 		<g class="parallax">
-			<use xlink:href="#gentle-wave" x="48" y="0" stroke="rgba(255,255,255,0.7)" fill="transparent" />
-			<use xlink:href="#gentle-wave" x="48" y="3" stroke="rgba(255,255,255,0.5)" fill="transparent" />
-			<use xlink:href="#gentle-wave" x="48" y="5" stroke="rgba(255,255,255,0.3)" fill="transparent" />
+			<use
+				xlink:href="#gentle-wave"
+				x="48"
+				y="0"
+				stroke="rgba(255,255,255,0.7)"
+				fill="transparent" />
+			<use
+				xlink:href="#gentle-wave"
+				x="48"
+				y="3"
+				stroke="rgba(255,255,255,0.5)"
+				fill="transparent" />
+			<use
+				xlink:href="#gentle-wave"
+				x="48"
+				y="5"
+				stroke="rgba(255,255,255,0.3)"
+				fill="transparent" />
 			<use xlink:href="#gentle-wave" x="48" y="7" stroke="rgba(255,255,255,1)" fill="transparent" />
 		</g>
 	</svg>
@@ -98,8 +115,13 @@
 		<div class="corners" />
 		<h1 class="title is-1 has-text-centered is-special main">Get Started</h1>
 		<div id="get-started-input">
-			<input type="text" class="input clean-input" placeholder="Enter your email..." />
-			<button>GO</button>
+			<input
+				type="text"
+				class="input clean-input"
+				placeholder="Enter your email..."
+				bind:value={email} />
+			<button on:click={() => (window.location.href += "signup?email=" + encodeURIComponent(email))}
+				>GO</button>
 		</div>
 	</div>
 	<div class="footer">
