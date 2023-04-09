@@ -4,7 +4,7 @@
 	import * as THREE from "three";
 	import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 	import type { Group, Mesh, MeshPhysicalMaterial, Scene, SkinnedMesh } from "three/src/Three";
-	import { getFirestore, doc, getDoc, DocumentSnapshot, type DocumentData } from "firebase/firestore";
+	import { getFirestore, doc, getDoc, where, query, getDocs, collection, addDoc } from "firebase/firestore";
 	import { getStorage, ref, getDownloadURL } from "firebase/storage";
 	import { app } from "../../../stores";
 
@@ -72,20 +72,20 @@
     }
 
 	const storage = getStorage();
-	let midiDownloadUrl: string
+	const db = getFirestore(app);
+	let midi: any
 
 	onMount(async () => {
-		let promises = []
+		let promises: Promise<any>[] = []
 
 		if (!app) {
 			console.error('Invalid session');
 			return;
 		}
-
-		const db = getFirestore(app);
+		
 		promises.push(getDoc(doc(db, "songs", $page.params.slug)).then(docSnap => {
 			promises.push(getDownloadURL(ref(storage, docSnap.data().midi)).then(e => {
-				midiDownloadUrl = e
+				promises.push(Midi.fromUrl(e).then(e => midi = e));
 			}))
 			
 			promises.push(new Promise((resolve, reject) => {
@@ -207,7 +207,6 @@
 		if (started) return
 
 		started = true
-		const midi = await Midi.fromUrl(midiDownloadUrl);
 		const notes: any[] = [];
 
 		midi.tracks.forEach(track => {
