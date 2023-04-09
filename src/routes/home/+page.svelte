@@ -3,6 +3,7 @@
 	import { onMount } from "svelte";
 	import { app } from "../stores";
 	import Background from "../background.svelte";
+	import { goto } from "$app/navigation";
 
 	let url: string | null = null;
 	const db = getFirestore(app);
@@ -30,13 +31,17 @@
 	async function chooseSong() {
 		const q = query(collection(db, "songs"), where("url", "==", url));
 		const querySnapshot = await getDocs(q);
-		const docs = [];
+		const docs : any[] = [];
 		querySnapshot.forEach(doc => {
 			docs.push(doc);
 		});
 		if (docs.length == 0) {
 			await addDoc(collection(db, "songs"), { url: url });
-		}
+            alert("Adding song. Please enter URL in a few minutes.");
+		} else {
+            let id = docs[0].data().original.split("/")[1];
+            goto(`/home/song/${id}`);
+        }
 	}
 </script>
 
