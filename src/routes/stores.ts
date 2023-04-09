@@ -15,7 +15,8 @@ const firebaseConfig = {
 export const user = writable();
 
 export const app = initializeApp(firebaseConfig);
+export const auth = getAuth()
 
-getAuth().onAuthStateChanged(u => {
+auth.onAuthStateChanged(u => {
 	user.set(u);
 });

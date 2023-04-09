@@ -2,12 +2,12 @@
 	import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 	import Background from "../background.svelte";
 	import { page } from "$app/stores";
+	import { auth } from "../stores";
 
 	let email: string | null = $page.url.searchParams.get("email");
 	let password: string;
 
 	async function signUp() {
-		const auth = getAuth();
 		await createUserWithEmailAndPassword(auth, email as string, password);
 	}
 </script>
