@@ -83,24 +83,25 @@
 			return;
 		}
 		
-		promises.push(getDoc(doc(db, "songs", $page.params.slug)).then(docSnap => {
-			promises.push(getDownloadURL(ref(storage, docSnap.data().midi)).then(e => {
-				promises.push(Midi.fromUrl(e).then(e => midi = e));
-			}))
-			
-			promises.push(new Promise((resolve, reject) => {
+		promises.push(new Promise((resolve, reject) => {
+			getDoc(doc(db, "songs", $page.params.slug)).then(docSnap => {
 				getDownloadURL(ref(storage, docSnap.data().original)).then(url => {
-					fetch(url).then(e => e.blob()).then(e => {
+					fetch(url).then(e => e.blob()).catch(reject).then(e => {
 						let reader = new FileReader()
 						reader.onload = (e => {
 							audio = new Audio(reader.result);
-							resolve(undefined)
+							getDownloadURL(ref(storage, docSnap.data().midi)).then(e => {
+								Midi.fromUrl(e).then(e => {
+									midi = e
+									resolve(undefined)
+								}).catch(reject);
+							}).catch(reject)
 						})
 						reader.onerror = reject
 						reader.readAsDataURL(e)
 					}).catch(reject)
 				}).catch(reject);
-			}))
+			}).catch(reject)
 		}));
 
 		promises.push(navigator.requestMIDIAccess().then(onMIDISuccess, err => {
