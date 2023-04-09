@@ -27,12 +27,21 @@
 	const testMat = new THREE.MeshStandardMaterial({
         color: "red"
     });
-	const plane = new THREE.Plane( new THREE.Vector3( 0, 0, 0 ), 0 );
 
 	const noteOnRotation = (95 * Math.PI) / 180;
 	const noteOffRotation = (90 * Math.PI) / 180;
 	const highlightedNoteMat = new THREE.MeshStandardMaterial({
 		color: 0x4287f5,
+		emissive: "white",
+		emissiveIntensity: 0.2,
+	});
+	const highlightedNoteMatGood = new THREE.MeshStandardMaterial({
+		color: 0x61e84d,
+		emissive: "white",
+		emissiveIntensity: 0.2,
+	});
+	const highlightedNoteMatBad = new THREE.MeshStandardMaterial({
+		color: 0xf54636,
 		emissive: "white",
 		emissiveIntensity: 0.2,
 	});
@@ -59,7 +68,8 @@
 
 				if (data[0] === 144) {
 					keyboardSkeleton.children[noteBone].rotation.x = noteOnRotation;
-					(keyboardMesh.children[noteMesh] as SkinnedMesh).material = highlightedNoteMat;
+					(keyboardMesh.children[noteMesh] as SkinnedMesh).material = 
+						(currentKeys.includes(data[1])) ? highlightedNoteMatGood : highlightedNoteMatBad;
 					heldKeys.push(data[1]);
                 }
                 if (data[0] === 128) {
@@ -184,7 +194,7 @@
 		noteBone.getWorldPosition(cube.position);
 		noteBone.getWorldScale(cube.scale);
 
-		cube.scale.z = note.duration * fallSpeed * 3;
+		cube.scale.z = note.duration * fallSpeed * 5;
 		cube.position.z = -note.time * fallSpeed - countdownSeconds * fallSpeed;
 		cube.position.y -= 0.01;
 		scene.add(cube);
@@ -240,10 +250,9 @@
                 mesh.position.z += unitsPerUpdate * audio.playbackRate;
 
 				if (mesh.position.z < 0.05 && mesh.position.z > -0.05 ) {
-					mesh.material = testMat;
 					currentKeys.push(note.midi);
 				} else if (mesh.position.z > 0.05 && mesh.position.z < 0.1) {
-					mesh.material = highlightedNoteMat;
+					
 				}
 
                 if (mesh.position.z > 0.25) {
