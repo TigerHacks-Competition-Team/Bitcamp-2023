@@ -131,7 +131,7 @@
 		
 		animate();
 		
-		audio = new Audio("../../TEST/test.mp3");
+		audio = new Audio("../../TEST/test.wav");
 	});
 	
 	function TestAutoPlay() {
@@ -171,7 +171,7 @@
 
 	const fallSpeed = 1; // Units per second
 	const countdownSeconds = 3; // Seconds
-	const updatesPerSeconds = 30;
+	const updatesPerSeconds = 100; // Keep at 100 pls
 
 	const msPerUpdate = (1 / updatesPerSeconds) * 1000;
 	const unitsPerUpdate = fallSpeed / updatesPerSeconds;
@@ -220,7 +220,7 @@
 
 <div class="game-menu">
 	<input value="100" min="0" max="100" on:input={volumeChanged} type="range"/>
-	<input value="100" min="20" max="200" on:input={speedChanged} type="range" disabled={!playing}/>
+	<input value="100" min="50" max="200" on:input={speedChanged} type="range" disabled={!playing}/>
 	<button on:click={TestSpawnNotes}>Test</button>
 </div>
 <div bind:this={gameContainer} />
