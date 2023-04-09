@@ -1,6 +1,10 @@
 @use "bulma/sass/utilities/all" as defaults;
 @import "vars";
 
+body {
+    overflow-y: hidden;
+}
+
 // gradient background
 #background {
 	position: absolute;
