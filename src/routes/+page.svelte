@@ -10,4 +10,3 @@
 <a href="/login">Login</a>
 <a href="/home">Home</a>
 <Background id="background" />
-<div class="background-fallback" />

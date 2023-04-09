@@ -8,4 +8,6 @@
 	z-index: -1000;
 	width: 100vw;
 	height: 100vh;
+    // this is the fallback colors, the animated background's starting point looks vaguely like this
+    background: linear-gradient(to bottom right, #FFB3AA, #FF9AAB, #FF93AD, #FFA6B2, #FFC2B8, #FFC4AF, #FFBCBF, #FFA4BB, #FF98AC, #FF939F, #FF9999, #FFAB95)
 }
