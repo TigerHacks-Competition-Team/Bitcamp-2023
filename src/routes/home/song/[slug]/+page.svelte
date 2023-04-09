@@ -8,6 +8,8 @@
 	import { getStorage, ref, getDownloadURL } from "firebase/storage";
 	import { app } from "../../../stores";
 
+	import { fly, fade } from 'svelte/transition'
+
 	import '../../../../style/menu.scss'
 
 	import { Midi } from "@tonejs/midi";
@@ -218,10 +220,15 @@
 		});
 
 		countdown = true
-		setTimeout(() => {
-			audio.play()
-			countdown = false
-		}, (countdownSeconds * 1000) / audio.playbackRate);
+		let countdownTick = 0
+		let countdownInterval = setInterval(() => {
+			if (!paused) countdownTick += audio.playbackRate
+			if (countdownTick > countdownSeconds * updatesPerSeconds) {
+				audio.play()
+				countdown = false
+				clearInterval(countdownInterval)
+			}
+		}, msPerUpdate)
 
 		setInterval(() => {
 			if (paused) return
@@ -266,19 +273,19 @@
 	function togglePauseMenu() {
 		if (!started) return
 		paused = !paused
-		audio[(!paused && audio.played ? "play" : "pause")]()
+		audio[(!paused && !countdown ? "play" : "pause")]()
 	}
 </script>
 
 <svelte:window on:keypress={e => {if (e.key === 'p') togglePauseMenu()}}/>
 
 {#if (paused || !started)}
-<div class="pause-menu game-ui">
+<div class="pause-menu game-ui" transition:fade={{duration: 100}}>
 	{#if started}
 		<label>Volume</label>
 		<input value={audio.volume*100} min="0" max="100" on:input={volumeChanged} type="range"/>
 		<label>Speed</label>
-		<input value={audio.playbackRate*100} min="50" max="200" on:input={speedChanged} type="range" disabled={countdown}/>
+		<input value={audio.playbackRate*100} min="50" max="200" on:input={speedChanged} type="range"/>
 	{:else}
 		<button on:click={beginGame} disabled={!loaded}>Start</button>
 		{#if loadingError} <p>Error Loading Data!</p> <p>{loadingError.message}</p> {/if}
