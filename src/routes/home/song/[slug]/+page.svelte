@@ -4,7 +4,7 @@
 	import * as THREE from "three";
 	import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 	import type { Group, Mesh, MeshPhysicalMaterial, Scene, SkinnedMesh } from "three/src/Three";
-	import { getFirestore, doc, getDoc } from "firebase/firestore";
+	import { getFirestore, doc, getDoc, DocumentSnapshot, type DocumentData } from "firebase/firestore";
 	import { getStorage, ref, getDownloadURL } from "firebase/storage";
 	import { app } from "../../../stores";
 
@@ -72,34 +72,40 @@
     }
 
 	const storage = getStorage();
-	let midiDownloadUrl
+	let midiDownloadUrl: string
 
 	onMount(async () => {
+		let promises = []
+
 		if (!app) {
 			console.error('Invalid session');
 			return;
 		}
 
 		const db = getFirestore(app);
-		const docSnap = await getDoc(doc(db, "songs", $page.params.slug));
-		
-		midiDownloadUrl = await getDownloadURL(ref(storage, docSnap.data().midi))
-		getDownloadURL(ref(storage, docSnap.data().original)).then(url => {
-			fetch(url).then(e => e.blob()).then(e => {
-				let reader = new FileReader()
-				reader.onload = (e => {
-					audio = new Audio(reader.result);
-				})
-				reader.readAsDataURL(e)
-			})
-		});
+		promises.push(getDoc(doc(db, "songs", $page.params.slug)).then(docSnap => {
+			promises.push(getDownloadURL(ref(storage, docSnap.data().midi)).then(e => {
+				midiDownloadUrl = e
+			}))
+			
+			promises.push(new Promise((resolve, reject) => {
+				getDownloadURL(ref(storage, docSnap.data().original)).then(url => {
+					fetch(url).then(e => e.blob()).then(e => {
+						let reader = new FileReader()
+						reader.onload = (e => {
+							audio = new Audio(reader.result);
+							resolve(undefined)
+						})
+						reader.onerror = reject
+						reader.readAsDataURL(e)
+					}).catch(reject)
+				}).catch(reject);
+			}))
+		}));
 
-		
-
-
-		navigator.requestMIDIAccess().then(onMIDISuccess, err => {
+		promises.push(navigator.requestMIDIAccess().then(onMIDISuccess, err => {
 			console.error(`Failed to get MIDI access - ${err}`);
-		});
+		}));
 		
 		scene = new THREE.Scene();
 		const camera = new THREE.PerspectiveCamera(
@@ -150,8 +156,12 @@
 					(child as Mesh).material = material;
 				}
 			});
-			
-			//TestSpawnNotes();
+
+			Promise.all(promises).then(() => {
+				loaded = true
+			}).catch(e => {
+				loadingError = e
+			})
 		});
 		
 		function animate() {
@@ -161,7 +171,6 @@
 		}
 		
 		animate();
-		
 	});
 
 	function spawnNote(note: any) {
@@ -172,7 +181,7 @@
 		noteBone.getWorldPosition(cube.position);
 		noteBone.getWorldScale(cube.scale);
 
-		cube.scale.z = note.duration * fallSpeed;
+		cube.scale.z = note.duration * fallSpeed * 3;
 		cube.position.z = -note.time * fallSpeed - countdownSeconds * fallSpeed;
 		cube.position.y -= 0.01;
 		scene.add(cube);
@@ -188,13 +197,18 @@
 	const unitsPerUpdate = fallSpeed / updatesPerSeconds;
 
 	let audio: HTMLAudioElement
-	let playing = false
+	let started = false
+	let paused = false
+	let countdown = false
+	let loaded = false
+	let loadingError: any
 
-	async function TestSpawnNotes() {
+	async function beginGame() {
+		if (started) return
+
+		started = true
 		const midi = await Midi.fromUrl(midiDownloadUrl);
 		const notes: any[] = [];
-
-		console.log(midi)
 
 		midi.tracks.forEach(track => {
 			track.notes.forEach(note => {
@@ -203,12 +217,15 @@
 			});
 		});
 
+		countdown = true
 		setTimeout(() => {
 			audio.play()
-			playing = true
-		}, countdownSeconds * 1000);
+			countdown = false
+		}, (countdownSeconds * 1000) / audio.playbackRate);
 
 		setInterval(() => {
+			if (paused) return
+
             let i = notes.length
 			currentKeys = [];
             while (i--) {
@@ -227,7 +244,6 @@
                     notes.splice(i, 1);
                 }
             }
-			console.log(score)
 			if (currentKeys.length === 0) return;
 
 			if (currentKeys.every(v => heldKeys.includes(v)) && currentKeys.length === heldKeys.length) {
@@ -246,13 +262,29 @@
 	function speedChanged(e: Event) {
 		audio.playbackRate = parseInt((e.target as HTMLInputElement).value) / 100
 	}
+
+	function togglePauseMenu() {
+		if (!started) return
+		paused = !paused
+		audio[(!paused && audio.played ? "play" : "pause")]()
+	}
 </script>
 
-<div class="game-menu">
-	<input value="100" min="0" max="100" on:input={volumeChanged} type="range"/>
-	<input value="100" min="50" max="200" on:input={speedChanged} type="range" disabled={!playing}/>
-	<button on:click={TestSpawnNotes}>Test</button>
+<svelte:window on:keypress={e => {if (e.key === 'p') togglePauseMenu()}}/>
+
+{#if (paused || !started)}
+<div class="pause-menu game-ui">
+	{#if started}
+		<label>Volume</label>
+		<input value={audio.volume*100} min="0" max="100" on:input={volumeChanged} type="range"/>
+		<label>Speed</label>
+		<input value={audio.playbackRate*100} min="50" max="200" on:input={speedChanged} type="range" disabled={countdown}/>
+	{:else}
+		<button on:click={beginGame} disabled={!loaded}>Start</button>
+		{#if loadingError} <p>Error Loading Data!</p> <p>{loadingError.message}</p> {/if}
+	{/if}
 </div>
+{/if}
 <div class="game-ui">
 	<div class="top">
 		<div class="song-info">
@@ -266,6 +298,5 @@
 	<div class="player-meter">
 		<meter value={performance} max="100" min="0" low="20" high="60" optimum="80"></meter>
 	</div>
-	<button on:click={TestSpawnNotes}>Test</button>
 </div>
 <div bind:this={gameContainer} />
