@@ -65,18 +65,20 @@
 
 	function animateBackground() {
 		const ctx = canv?.getContext("2d") as CanvasRenderingContext2D;
-		for (let x = 0; x < width; x++) {
-			for (let y = 0; y < height; y++) {
-				let [r, g, b] = [
-					getPixelRed(x, y, time),
-					getPixelBlue(x, y, time),
-					getPixelGreen(x, y, time),
-				];
-				ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
-				ctx.fillRect(x, y, 1, 1);
+		if (ctx) {			
+			for (let x = 0; x < width; x++) {
+				for (let y = 0; y < height; y++) {
+					let [r, g, b] = [
+						getPixelRed(x, y, time),
+						getPixelBlue(x, y, time),
+						getPixelGreen(x, y, time),
+					];
+					ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
+					ctx.fillRect(x, y, 1, 1);
+				}
 			}
+			time += 0.12;
 		}
-		time += 0.12;
 		window.requestAnimationFrame(animateBackground);
 	}
 
