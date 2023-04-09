@@ -2,6 +2,19 @@
 	import Navbar from "./navbar.svelte";
 	import "../style/index.scss";
 	import Background from "./background.svelte";
+	import { onMount } from "svelte";
+
+	function rotatePiano() {
+		const piano = document.getElementById("piano") as HTMLElement;
+		let rise = window.innerHeight - ((0.75 * window.innerHeight) - (0.2 * window.innerWidth));
+		let run = window.innerWidth;
+		piano.style.transform = `rotateZ(${Math.atan(rise / run) * -(180 / Math.PI)}deg)`;
+	}
+
+	onMount(() => {
+		rotatePiano()
+		window.addEventListener("resize", rotatePiano)
+	})
 </script>
 
 <svelte:head>
@@ -10,9 +23,7 @@
 
 <span id="background"><Background /></span>
 <Navbar />
-
-<!-- <a href="/login">Login</a> -->
-<!-- <a href="/home">Home</a> -->
+<img src="/img/piano.png" alt="" id="piano">
 
 <div class="section is-thin">
 	<h1 class="title is-1 main">Learning Piano.</h1>

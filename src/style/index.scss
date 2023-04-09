@@ -2,7 +2,7 @@
 @import "vars";
 
 body {
-    overflow-y: hidden;
+	overflow-y: hidden;
 }
 
 // gradient background
@@ -14,7 +14,30 @@ body {
 	width: 100vw;
 	height: 100vh;
 	// angle it
-	clip-path: polygon(0% 0%, 100% 0%, 100% calc(75% - 20vw), 0% 100%);
+	clip-path: polygon(0% 0%, 100% 0%, 100% calc(75vh - 20vw), 0% 100%);
+
+	@include defaults.mobile {
+		clip-path: polygon(0% 0%, 100% 0%, 100% calc(85vh - 20vw), 0% 90%);
+	}
+}
+
+// piano image
+#piano {
+	position: absolute;
+	top: calc(55vh - 20vw);
+	right: -10%;
+
+	width: 70vw;
+	filter: drop-shadow(0px 0px 50px rgba(0, 0, 0, 0.5));
+	// transform: rotateZ(-25deg);
+	transform: rotateZ(-15deg) translate(100%, -90%);
+	transition: transform 2s cubic-bezier(0.67, 0.5, 0.28, 1.19);
+
+	z-index: -10;
+
+	@include defaults.mobile {
+		display: none;
+	}
 }
 
 .simple-button {
@@ -66,8 +89,11 @@ body {
 		width: 0.8em;
 		height: 0.8em;
 		border-radius: 1em;
-		background-color: $primary-pink;
 		margin: 0.1em;
+
+		&:nth-child(1) { background-color: $primary-pink }
+		&:nth-child(2) { background-color: $primary }
+		&:nth-child(3) { background-color: $primary-yellow }
 	}
 }
 
@@ -77,9 +103,9 @@ body {
 
 // waves
 .waves {
-    height: 15vh;
-    width: 100%;
-    opacity: 0.3;
+	height: 15vh;
+	width: 100%;
+	opacity: 0.3;
 
 	.parallax > use {
 		animation: move-forever 25s cubic-bezier(0.55, 0.5, 0.45, 0.5) infinite;
@@ -103,14 +129,13 @@ body {
 }
 
 @keyframes move-forever {
-    0% {
-        transform: translate3d(-90px, 0, 0);
-    }
-    100% {
-        transform: translate3d(85px, 0, 0);
-    }
+	0% {
+		transform: translate3d(-90px, 0, 0);
+	}
+	100% {
+		transform: translate3d(85px, 0, 0);
+	}
 }
-
 
 // bottom 'get started' / footer
 #fancy-footer {
@@ -129,8 +154,9 @@ body {
 		padding: 0 10vw;
 		position: relative;
 		z-index: 2;
-	
-		&::before, &::after {
+
+		&::before,
+		&::after {
 			content: "";
 			position: absolute;
 			top: 0;
@@ -146,15 +172,16 @@ body {
 			right: 0;
 			border-bottom-left-radius: $footer-radius;
 		}
-	
+
 		.corners {
 			height: 2em;
 			width: 100%;
 			z-index: 3;
 			position: relative;
 			margin-bottom: 2em;
-	
-			&::before, &::after {
+
+			&::before,
+			&::after {
 				content: "";
 				position: absolute;
 				top: 0;
@@ -178,18 +205,28 @@ body {
 			margin: auto 15%;
 			position: relative;
 
-			input, button {
+			input,
+			button {
 				font-family: $family-secondary;
 				display: inline;
+
+				@include defaults.mobile {
+					display: block;
+					width: max-content;
+				}
 			}
 
 			input {
 				width: calc(100% - 3em);
 				padding: 0 0.25em;
-				
 
 				&::placeholder {
 					color: $text-dim;
+				}
+
+				@include defaults.mobile {
+					width: 100%;
+					font-size: 1.5em;
 				}
 			}
 
@@ -204,21 +241,39 @@ body {
 
 				margin-top: -0.1em;
 				height: 1.5em;
-				
+
 				font-size: 3em;
 				font-weight: bold;
 
 				cursor: pointer;
 			}
 
+			&::before,
 			&::after {
 				content: "";
+
 				position: absolute;
+				top: 100%;
 				left: 0;
-				bottom: -5px;
+
 				width: 100%;
 				height: 5px;
-				background-color: $text-dimmer;
+			}
+			&::before {
+				transform: scaleX(0);
+				transform-origin: right;
+				transition: transform 0.5s, color 0.2s;
+				background-color: white;
+			}
+			&::after {
+				background-color: rgba(255, 255, 255, 0.5);
+			}
+
+			&:has(input:focus) {
+				&::before {
+					transform: scaleX(1);
+					transform-origin: left;
+				}
 			}
 		}
 	}
