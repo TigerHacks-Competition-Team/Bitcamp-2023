@@ -41,8 +41,7 @@
 		Learning the piano is hard. <span class="is-special">Seriously.</span>
 	</h1>
 	<h3 class="subtitle is-4 has-text-centered">
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc tellus sapien, ornare non faucibus
-		vitae, elementum nec nunc.
+		With Playright, we try to make it as simple as possible to learn and enjoy the songs you love.
 	</h3>
 </div>
 
@@ -52,22 +51,23 @@
 			<img src="/img/demo-temp.png" alt="Demo" id="demo" />
 		</div>
 		<div class="column">
-			<h1 class="title is-1">Text here</h1>
+			<h1 class="title is-1">State of the art</h1>
 			<h3 class="subtitle is-4">
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-				labore et dolore magna aliqua. Sed pulvinar proin gravida hendrerit lectus a. Id diam vel
-				quam elementum. Rhoncus mattis rhoncus urna neque viverra justo nec. Sodales ut etiam sit
-				amet nisl. Purus in mollis nunc sed id semper risus. Curabitur vitae nunc sed velit. Erat
-				pellentesque adipiscing commodo elit at. Semper risus in hendrerit gravida rutrum quisque
-				non tellus orci. Suscipit adipiscing bibendum est ultricies integer. Vel pretium lectus quam
-				id leo in vitae. Lorem ipsum dolor sit amet consectetur. Senectus et netus et malesuada
-				fames.
+				Playright uses machine learning based on Deezer's <b>Spleeter</b> algorithm to split any
+				song into the tracks that make it up. Then, we use Spotify's <b>Basic Pitch</b> algorithm to
+				generate a MIDI (piano notes) from the piano. Then, we play it back as a game, creating an engaging
+				learning experience.
 			</h3>
 			<div class="dots">
 				<span />
 				<span />
 				<span />
 			</div>
+			<h1 class="title is-1 has-text-right">Play your way</h1>
+			<h3 class="subtitle is-4 has-text-right">
+				We use songs from YouTube's extensive library, letting you play along with any song you
+				want. This makes your sessions more memorable, making Playright an effective tool.
+			</h3>
 		</div>
 	</div>
 </div>
