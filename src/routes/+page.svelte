@@ -136,7 +136,7 @@
 					& <a href="https://threejs.org">Three.js</a>
 				</p>
 				<p>
-					Powered by with <a href="https://firebase.google.com">Firebase</a>,
+					Powered by <a href="https://firebase.google.com">Firebase</a>,
 					<a href="https://cloud.google.com/kubernetes-engine/">Google Cloud Kubernetes Engine</a>,
 					<a href="https://github.com/deezer/spleeter">Spleeter</a>, &
 					<a href="https://basicpitch.spotify.com/">Basic Pitch</a>
