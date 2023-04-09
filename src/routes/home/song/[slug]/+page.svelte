@@ -4,6 +4,9 @@
 	import * as THREE from "three";
 	import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 	import type { Group, Mesh, MeshPhysicalMaterial, Scene, SkinnedMesh } from "three/src/Three";
+	import { getFirestore, doc, getDoc } from "firebase/firestore";
+	import { getStorage, ref, getDownloadURL } from "firebase/storage";
+	import { app } from "../../../stores";
 
 	import '../../../../style/menu.scss'
 
@@ -68,7 +71,32 @@
         }
     }
 
-	onMount(() => {
+	const storage = getStorage();
+	let midiDownloadUrl
+
+	onMount(async () => {
+		if (!app) {
+			console.error('Invalid session');
+			return;
+		}
+
+		const db = getFirestore(app);
+		const docSnap = await getDoc(doc(db, "songs", $page.params.slug));
+		
+		midiDownloadUrl = await getDownloadURL(ref(storage, docSnap.data().midi))
+		getDownloadURL(ref(storage, docSnap.data().original)).then(url => {
+			fetch(url).then(e => e.blob()).then(e => {
+				let reader = new FileReader()
+				reader.onload = (e => {
+					audio = new Audio(reader.result);
+				})
+				reader.readAsDataURL(e)
+			})
+		});
+
+		
+
+
 		navigator.requestMIDIAccess().then(onMIDISuccess, err => {
 			console.error(`Failed to get MIDI access - ${err}`);
 		});
@@ -134,7 +162,6 @@
 		
 		animate();
 		
-		audio = new Audio("../../TEST/magnetic.mp3");
 	});
 
 	function spawnNote(note: any) {
@@ -164,8 +191,10 @@
 	let playing = false
 
 	async function TestSpawnNotes() {
-		const midi = await Midi.fromUrl("../../TEST/magnetic.mid");
+		const midi = await Midi.fromUrl(midiDownloadUrl);
 		const notes: any[] = [];
+
+		console.log(midi)
 
 		midi.tracks.forEach(track => {
 			track.notes.forEach(note => {
@@ -237,6 +266,6 @@
 	<div class="player-meter">
 		<meter value={performance} max="100" min="0" low="20" high="60" optimum="80"></meter>
 	</div>
-
+	<button on:click={TestSpawnNotes}>Test</button>
 </div>
 <div bind:this={gameContainer} />
