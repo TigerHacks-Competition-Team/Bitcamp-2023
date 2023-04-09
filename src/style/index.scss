@@ -24,12 +24,14 @@ body {
 // piano image
 #piano {
 	position: absolute;
-	top: calc(65vh - 20vw);
+	top: calc(55vh - 20vw);
 	right: -10%;
 
 	width: 70vw;
 	filter: drop-shadow(0px 0px 50px rgba(0, 0, 0, 0.5));
-	transform: rotateZ(-25deg);
+	// transform: rotateZ(-25deg);
+	transform: rotateZ(-15deg) translate(100%, -90%);
+	transition: transform 2s cubic-bezier(.73,.27,.37,.79);
 
 	z-index: -10;
 
@@ -62,12 +64,12 @@ body {
 // also, make it the height of the background
 .section:first-of-type {
 	margin-top: max(0px, 50vh - 25em);
-	// 3.25rem is default navbar height, 6rem is .section vertical padding, 7.5wv is for better widescreen compat
-	min-height: calc(100vh - 3.25rem - 6rem + 7.5vw);
+	// 3.25rem is default navbar height, 6rem is .section vertical padding
+	min-height: calc(100vh - 3.25rem - 6rem);
 }
 // make the first section shorter if the navbar is expanded
 #navbar:not(.is-inactive) + .section {
-	min-height: calc(100vh - 6.5rem - 6rem + 7.5vw);
+	min-height: calc(100vh - 6.5rem - 6rem);
 }
 
 @include defaults.tablet {
