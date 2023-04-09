@@ -88,6 +88,9 @@
 	const db = getFirestore(app);
 	let midi: any
 
+	let songName: string
+	let songAuthor: string
+
 	onMount(async () => {
 		let promises: Promise<any>[] = []
 
@@ -98,12 +101,14 @@
 		
 		promises.push(new Promise((resolve, reject) => {
 			getDoc(doc(db, "songs", $page.params.slug)).then(docSnap => {
-				getDownloadURL(ref(storage, docSnap.data().original)).then(url => {
+				songName = docSnap?.data()?.title
+				songAuthor = docSnap?.data()?.author
+				getDownloadURL(ref(storage, docSnap?.data()?.original)).then(url => {
 					fetch(url).then(e => e.blob()).catch(reject).then(e => {
 						let reader = new FileReader()
 						reader.onload = (e => {
-							audio = new Audio(reader.result);
-							getDownloadURL(ref(storage, docSnap.data().midi)).then(e => {
+							audio = new Audio(reader.result as string);
+							getDownloadURL(ref(storage, docSnap?.data()?.midi)).then(e => {
 								Midi.fromUrl(e).then(e => {
 									midi = e
 									resolve(undefined)
@@ -111,7 +116,7 @@
 							}).catch(reject)
 						})
 						reader.onerror = reject
-						reader.readAsDataURL(e)
+						reader.readAsDataURL(e as Blob)
 					}).catch(reject)
 				}).catch(reject);
 			}).catch(reject)
@@ -197,7 +202,7 @@
 
 		cube.scale.z = note.duration * fallSpeed * 5;
 		cube.position.z = -note.time * fallSpeed - countdownSeconds * fallSpeed;
-		cube.position.y -= 0.01;
+		cube.position.y -= 0.001;
 		scene.add(cube);
 
 		return { mesh: cube, note: note };
@@ -223,8 +228,8 @@
 		started = true
 		const notes: any[] = [];
 
-		midi.tracks.forEach(track => {
-			track.notes.forEach(note => {
+		(midi.tracks as any[]).forEach(track => {
+			(track.notes as any[]).forEach(note => {
 				if (note.midi > 87) return;
 				notes.push(spawnNote(note));
 			});
@@ -292,9 +297,9 @@
 {#if (paused || !started)}
 <div class="pause-menu game-ui" transition:fade={{duration: 100}}>
 	{#if started}
-		<label>Volume</label>
+		<label for="">Volume</label>
 		<input value={audio.volume*100} min="0" max="100" on:input={volumeChanged} type="range"/>
-		<label>Speed</label>
+		<label for="">Speed</label>
 		<input value={audio.playbackRate*100} min="50" max="200" on:input={speedChanged} type="range"/>
 	{:else}
 		<button on:click={beginGame} disabled={!loaded}>Start</button>
@@ -306,8 +311,10 @@
 <div class="game-ui" transition:fly>
 	<div class="top">
 		<div class="song-info">
-			<h1 class="title is-3">Song Title</h1>
-			<h5 class="title is-5">Artist Name</h5>
+			{#if (songName && songAuthor)}
+				<h1 class="title is-3">{songName}</h1>
+				<h5 class="title is-5">{songAuthor}</h5>
+			{/if}
 		</div>
 		<div class="player-score">
 			<h1 class="title is-3">{String(score).padStart(6, '0')}</h1>

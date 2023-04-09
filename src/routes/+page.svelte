@@ -31,8 +31,8 @@
 	<h1 class="title is-1 main">Learning Piano.</h1>
 	<h1 class="title is-1 is-special main">One Key at a Time.</h1>
 	<h3 class="subtitle is-3 main">
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc tellus sapien, ornare non faucibus
-		vitae, elementum nec nunc.
+		Learning with playright is easy and fun. Just drop in a song and play
+		away!
 	</h3>
 </div>
 
