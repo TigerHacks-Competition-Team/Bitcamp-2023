@@ -169,14 +169,18 @@
         noteBone.getWorldScale(cube.scale);
 
         cube.scale.z = (note.duration * fallSpeed);
-        cube.position.z = (-note.time * fallSpeed) + (countdownSeconds * fallSpeed);
+        cube.position.z = (-note.time * fallSpeed) - (countdownSeconds * fallSpeed);
         scene.add(cube);
 
         return {mesh: cube, note: note}
     }
 
-    const fallSpeed = 2.5
-    const countdownSeconds = 3
+    const fallSpeed = 1 // Units per second
+    const countdownSeconds = 3 // Seconds
+    const updatesPerSeconds = 50
+
+    const msPerUpdate = (1/updatesPerSeconds)*1000
+    const unitsPerUpdate = fallSpeed/updatesPerSeconds
 
     async function TestSpawnNotes() {
         const midi = await Midi.fromUrl("../../TEST/test.mid");
@@ -197,7 +201,7 @@
             let i = notes.length
             while (i--) {
                 let { mesh, note } = notes[i]
-                mesh.position.z += fallSpeed/250
+                mesh.position.z += unitsPerUpdate
 
                 //if (mesh.position.z - mesh.scale.z/2) {
                     //if (playerHoldingNotes.includes(note)) {
@@ -210,7 +214,7 @@
                     notes.splice(i, 1)
                 }
             }
-        }, 0)
+        }, msPerUpdate)
     }
 </script>
 
