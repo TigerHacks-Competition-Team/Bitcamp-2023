@@ -11,12 +11,19 @@
 	import MidiParser from "midi-parser-js";
 	import { Midi } from "@tonejs/midi";
 
-	let gameContainer: HTMLDivElement;
-	let keyboardSkeleton: Group;
-	let keyboardMesh: Group;
-	let material: MeshPhysicalMaterial;
-	let scene: Scene;
-	let playerHoldingNotes: any[];
+    let gameContainer : HTMLDivElement;
+    let keyboardSkeleton : Group;
+    let keyboardMesh : Group;
+    let material : MeshPhysicalMaterial;
+    let scene : Scene;
+	let heldKeys : number[] = [];
+	let currentKeys : number[] = [];
+	let score = 0;
+
+	const testMat = new THREE.MeshStandardMaterial({
+        color: "red"
+    });
+	const plane = new THREE.Plane( new THREE.Vector3( 0, 0, 0 ), 0 );
 
 	const noteOnRotation = (95 * Math.PI) / 180;
 	const noteOffRotation = (90 * Math.PI) / 180;
@@ -49,18 +56,18 @@
 				if (data[0] === 144) {
 					keyboardSkeleton.children[noteBone].rotation.x = noteOnRotation;
 					(keyboardMesh.children[noteMesh] as SkinnedMesh).material = highlightedNoteMat;
-
-					playerHoldingNotes.push(data[1]);
-				}
-				if (data[0] === 128) {
-					keyboardSkeleton.children[noteBone].rotation.x = noteOffRotation;
-					(keyboardMesh.children[noteMesh] as SkinnedMesh).material = material;
-
-					playerHoldingNotes.splice(playerHoldingNotes.indexOf(data[1]), 1);
-				}
-			};
-		}
-	}
+					heldKeys.push(data[1]);
+                }
+                if (data[0] === 128) {
+                    keyboardSkeleton.children[noteBone].rotation.x = 
+                        noteOffRotation;
+                    (keyboardMesh.children[noteMesh] as SkinnedMesh).material = material; 
+                    
+					heldKeys.splice(heldKeys.indexOf(data[1]), 1);
+                }
+            }
+        }
+    }
 
 	onMount(() => {
 		navigator.requestMIDIAccess().then(onMIDISuccess, err => {
@@ -77,11 +84,9 @@
 		
 		//scene.add(new THREE.AxesHelper(5));
 		scene.background = new THREE.Color(0x1c1c1c);
-
 		const light = new THREE.PointLight();
 		light.position.set(0.8, 70, 50.0);
 		scene.add(light);
-
 		camera.position.x = 0.4;
 		camera.position.y = 9;
 		camera.position.z = 4.5;
@@ -91,11 +96,9 @@
 		
 		const renderer = new THREE.WebGLRenderer();
 		renderer.setSize(window.innerWidth, window.innerHeight);
-
 		if (document.getElementsByTagName("canvas").length === 0) {
 			gameContainer.appendChild(renderer.domElement);
 		}
-
 		const fbxLoader = new FBXLoader();
 		const textureLoader = new THREE.TextureLoader();
 		
@@ -113,7 +116,6 @@
 			obj.scale.y = 0.005;
 			obj.scale.z = 0.005;
 			obj.position.z = 0.5;
-
 			obj.traverse(child => {
 				if ((child as Mesh).isMesh) {
 					(child as Mesh).material = material;
@@ -131,7 +133,7 @@
 		
 		animate();
 		
-		audio = new Audio("../../TEST/test.wav");
+		audio = new Audio("../../TEST/magnetic.mp3");
 	});
 	
 	function TestAutoPlay() {
@@ -157,7 +159,7 @@
 
 	function spawnNote(note: any) {
 		let cube = new THREE.Mesh(cubeGeo, highlightedNoteMat);
-		1;
+
 		let noteBone = keyboardSkeleton.children[getNoteBone(note.midi)];
 		noteBone.getWorldPosition(cube.position);
 		noteBone.getWorldScale(cube.scale);
@@ -180,7 +182,7 @@
 	let playing = false
 
 	async function TestSpawnNotes() {
-		const midi = await Midi.fromUrl("../../TEST/test.mid");
+		const midi = await Midi.fromUrl("../../TEST/magnetic.mid");
 		const notes: any[] = [];
 
 		midi.tracks.forEach(track => {
@@ -196,17 +198,31 @@
 		}, countdownSeconds * 1000);
 
 		setInterval(() => {
-			let i = notes.length;
-			while (i--) {
-				let { mesh, note } = notes[i];
-				mesh.position.z += unitsPerUpdate * audio.playbackRate;
+            let i = notes.length
+			currentKeys = [];
+            while (i--) {
+                let { mesh, note } = notes[i]
+                mesh.position.z += unitsPerUpdate * audio.playbackRate;
 
-				if (mesh.position.z > 0) {
-					scene.remove(mesh);
-					notes.splice(i, 1);
+				if (mesh.position.z < 0.05 && mesh.position.z > -0.05 ) {
+					mesh.material = testMat;
+					currentKeys.push(note.midi);
+				} else if (mesh.position.z > 0.05 && mesh.position.z < 0.1) {
+					mesh.material = highlightedNoteMat;
 				}
+
+                if (mesh.position.z > 1) {
+                    scene.remove(mesh);
+                    notes.splice(i, 1);
+                }
+            }
+			console.log(score)
+			if (currentKeys.length === 0) return;
+
+			if (currentKeys.every(v => heldKeys.includes(v)) && currentKeys.length === heldKeys.length) {
+				score++;
 			}
-		}, msPerUpdate);
+        }, msPerUpdate);
 	}
 
 	function volumeChanged(e: Event) {
