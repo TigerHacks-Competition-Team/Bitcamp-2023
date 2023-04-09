@@ -7,8 +7,6 @@
 
 	import '../../../../style/menu.scss'
 
-	import MidiPlayer from "midi-player-js";
-	import MidiParser from "midi-parser-js";
 	import { Midi } from "@tonejs/midi";
 
     let gameContainer : HTMLDivElement;
@@ -19,6 +17,7 @@
 	let heldKeys : number[] = [];
 	let currentKeys : number[] = [];
 	let score = 0;
+	let performance = 60;
 
 	const testMat = new THREE.MeshStandardMaterial({
         color: "red"
@@ -99,6 +98,7 @@
 		if (document.getElementsByTagName("canvas").length === 0) {
 			gameContainer.appendChild(renderer.domElement);
 		}
+
 		const fbxLoader = new FBXLoader();
 		const textureLoader = new THREE.TextureLoader();
 		
@@ -112,6 +112,7 @@
 			keyboardSkeleton = <Group>obj.getObjectByName("Armature");
 			keyboardMesh = obj;
 			scene.add(obj);
+			obj.renderOrder = 5;
 			obj.scale.x = 0.005;
 			obj.scale.y = 0.005;
 			obj.scale.z = 0.005;
@@ -135,30 +136,10 @@
 		
 		audio = new Audio("../../TEST/magnetic.mp3");
 	});
-	
-	function TestAutoPlay() {
-		let test = new MidiPlayer.Player(e => {
-			let noteBone = getNoteBone(e.noteNumber);
-			let noteMesh = getNoteMesh(e.noteNumber);
-			if (e.name === "Note on") {
-				keyboardSkeleton.children[noteBone].rotation.x = noteOnRotation;
-				(keyboardMesh.children[noteMesh] as SkinnedMesh).material = highlightedNoteMat;
-			}
-			if (e.name === "Note off") {
-				keyboardSkeleton.children[noteBone].rotation.x = noteOffRotation;
-				(keyboardMesh.children[noteMesh] as SkinnedMesh).material = material;
-			}
-		});
-		fetch("../../TEST/test.mid").then(e =>
-			e.arrayBuffer().then(e => {
-				test.loadArrayBuffer(e);
-				test.play();
-			})
-		);
-	}
 
 	function spawnNote(note: any) {
 		let cube = new THREE.Mesh(cubeGeo, highlightedNoteMat);
+		cube.renderOrder = 1;
 
 		let noteBone = keyboardSkeleton.children[getNoteBone(note.midi)];
 		noteBone.getWorldPosition(cube.position);
@@ -166,6 +147,7 @@
 
 		cube.scale.z = note.duration * fallSpeed;
 		cube.position.z = -note.time * fallSpeed - countdownSeconds * fallSpeed;
+		cube.position.y -= 0.01;
 		scene.add(cube);
 
 		return { mesh: cube, note: note };
@@ -211,7 +193,7 @@
 					mesh.material = highlightedNoteMat;
 				}
 
-                if (mesh.position.z > 1) {
+                if (mesh.position.z > 0.25) {
                     scene.remove(mesh);
                     notes.splice(i, 1);
                 }
@@ -221,6 +203,9 @@
 
 			if (currentKeys.every(v => heldKeys.includes(v)) && currentKeys.length === heldKeys.length) {
 				score++;
+				performance += 0.15;
+			} else {
+				performance -= 0.15;
 			}
         }, msPerUpdate);
 	}
@@ -238,5 +223,20 @@
 	<input value="100" min="0" max="100" on:input={volumeChanged} type="range"/>
 	<input value="100" min="50" max="200" on:input={speedChanged} type="range" disabled={!playing}/>
 	<button on:click={TestSpawnNotes}>Test</button>
+</div>
+<div class="game-ui">
+	<div class="top">
+		<div class="song-info">
+			<h1 class="title is-3">Song Title</h1>
+			<h5 class="title is-5">Artist Name</h5>
+		</div>
+		<div class="player-score">
+			<h1 class="title is-3">{String(score).padStart(6, '0')}</h1>
+		</div>
+	</div>
+	<div class="player-meter">
+		<meter value={performance} max="100" min="0" low="20" high="60" optimum="80"></meter>
+	</div>
+
 </div>
 <div bind:this={gameContainer} />
