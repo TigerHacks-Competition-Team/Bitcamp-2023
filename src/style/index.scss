@@ -38,6 +38,7 @@
 .title {
 	// the big titles on the main page
 	&.main {
+		font-family: $family-secondary;
 		font-size: 4rem;
 		color: $text-dim;
 		&:first-child {
@@ -45,23 +46,87 @@
 		}
 	}
 
-	&.is-special {
+	&.is-special, .is-special {
 		color: $secondary-light;
 	}
 }
 .subtitle {
-	color: $text-dimmer;
-	max-width: 50vh;
+	&.main {
+		color: $text-dimmer;
+		max-width: 50vh;
+	}
 }
 
 // add extra top margin to the first section, relative to how much teh screen can fit
+// also, make it the height of the background
 .section:first-of-type {
 	margin-top: max(0px, 50vh - 25em);
+	// 3.25rem is default navbar height, 6rem is .section vertical padding
+	min-height: calc(100vh - 3.25rem - 6rem);
+}
+// make the first section shorter if the navbar is expanded
+#navbar:not(.is-inactive) + .section {
+	min-height: calc(100vh - 6.5rem - 6rem);
 }
 
 @include defaults.tablet {
-	.section.is-thin {
-		margin-left: 7.5em;
-		margin-right: 7.5em;
+	.section {
+		margin-left: 3rem;
+		margin-right: 3rem;
 	}
+	.section.is-thin {
+		margin-left: 7.5rem;
+		margin-right: 7.5rem;
+	}
+}
+
+.dots {
+	span {
+		display: inline-block;
+		width: 0.8em;
+		height: 0.8em;
+		border-radius: 1em;
+		background-color: $primary-pink;
+		margin: 0.1em;
+	}
+}
+
+.divider {
+	margin: 10rem 0;
+}
+
+// waves
+.waves {
+    height: 15vh;
+    width: 100%;
+    opacity: 0.3;
+
+	.parallax > use {
+		animation: move-forever 25s cubic-bezier(0.55, 0.5, 0.45, 0.5) infinite;
+	}
+	.parallax > use:nth-child(1) {
+		animation-delay: -2s;
+		animation-duration: 7s;
+	}
+	.parallax > use:nth-child(2) {
+		animation-delay: -3s;
+		animation-duration: 10s;
+	}
+	.parallax > use:nth-child(3) {
+		animation-delay: -4s;
+		animation-duration: 13s;
+	}
+	.parallax > use:nth-child(4) {
+		animation-delay: -5s;
+		animation-duration: 20s;
+	}
+}
+
+@keyframes move-forever {
+    0% {
+        transform: translate3d(-90px, 0, 0);
+    }
+    100% {
+        transform: translate3d(85px, 0, 0);
+    }
 }
