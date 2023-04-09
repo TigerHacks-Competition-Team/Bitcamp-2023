@@ -7,6 +7,7 @@
 	import { getFirestore, doc, getDoc, where, query, getDocs, collection, addDoc } from "firebase/firestore";
 	import { getStorage, ref, getDownloadURL } from "firebase/storage";
 	import { app } from "../../../stores";
+	import { create_in_transition } from "svelte/internal";
 
 	import { fly, fade } from 'svelte/transition'
 
@@ -292,7 +293,8 @@
 	{/if}
 </div>
 {/if}
-<div class="game-ui">
+{#if (!paused && started)}
+<div class="game-ui" transition:fly>
 	<div class="top">
 		<div class="song-info">
 			<h1 class="title is-3">Song Title</h1>
@@ -306,4 +308,10 @@
 		<meter value={performance} max="100" min="0" low="20" high="60" optimum="80"></meter>
 	</div>
 </div>
+{/if}
+
+{#if !loaded}
+<div class="loading-block" transition:fade />
+{/if}
+
 <div bind:this={gameContainer} />
