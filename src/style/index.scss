@@ -31,7 +31,7 @@ body {
 	filter: drop-shadow(0px 0px 50px rgba(0, 0, 0, 0.5));
 	// transform: rotateZ(-25deg);
 	transform: rotateZ(-15deg) translate(100%, -90%);
-	transition: transform 2s cubic-bezier(.73,.27,.37,.79);
+	transition: transform 2s cubic-bezier(0.67, 0.5, 0.28, 1.19);
 
 	z-index: -10;
 
@@ -245,14 +245,32 @@ body {
 				cursor: pointer;
 			}
 
+			&::before,
 			&::after {
 				content: "";
+
 				position: absolute;
+				top: 100%;
 				left: 0;
-				bottom: -5px;
+
 				width: 100%;
 				height: 5px;
-				background-color: $text-dimmer;
+			}
+			&::before {
+				transform: scaleX(0);
+				transform-origin: right;
+				transition: transform 0.5s, color 0.2s;
+				background-color: white;
+			}
+			&::after {
+				background-color: rgba(255, 255, 255, 0.5);
+			}
+
+			&:has(input:focus) {
+				&::before {
+					transform: scaleX(1);
+					transform-origin: left;
+				}
 			}
 		}
 	}
