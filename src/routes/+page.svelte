@@ -8,7 +8,7 @@
 	<title>Playright</title>
 </svelte:head>
 
-<Background id="background" />
+<span id="background"><Background /></span>
 <Navbar />
 
 <!-- <a href="/login">Login</a> -->
@@ -82,7 +82,7 @@
 </div>
 
 <div id="fancy-footer">
-	<Background id="footer-bg" />
+	<span id="footer-bg"><Background /></span>
 	<div id="get-started">
 		<div class="corners" />
 		<h1 class="title is-1 has-text-centered is-special main">Get Started</h1>

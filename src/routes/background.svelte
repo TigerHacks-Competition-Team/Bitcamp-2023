@@ -20,7 +20,6 @@
 		blue: 235,
 	};
 	export let shiftStrength = 3;
-	export let id: string | null = null;
 
 	// this takes a red, green, or blue value, along with the key for which one it is
 	function shiftColorValueToRange(value: number, valueKey: "red" | "green" | "blue") {
@@ -65,7 +64,7 @@
 
 	function animateBackground() {
 		const ctx = canv?.getContext("2d") as CanvasRenderingContext2D;
-		if (ctx) {			
+		if (ctx) {
 			for (let x = 0; x < width; x++) {
 				for (let y = 0; y < height; y++) {
 					let [r, g, b] = [
@@ -85,12 +84,14 @@
 	onMount(animateBackground);
 </script>
 
-<canvas {id} bind:this={canv} {width} {height} />
+<canvas bind:this={canv} {width} {height} />
 
 <style lang="scss">
 	@import "../style/vars";
-	
+
 	canvas {
 		background: $magic-gradient;
+		width: 100%;
+		height: 100%;
 	}
 </style>
