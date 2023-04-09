@@ -5,7 +5,7 @@
 		signInWithEmailAndPassword,
 	} from "firebase/auth";
 	import { onMount } from "svelte";
-	import Background from "./../background.svelte";
+	import Background from "../background.svelte";
 
 	onMount(() => console.log(getAuth().currentUser));
 
@@ -37,14 +37,14 @@
 
 <span id="background"><Background /></span>
 <div id="login">
-	<h1 class="title is-1 has-text-centered main">Log In</h1>
+	<h1 class="title is-1 has-text-centered main">Sign Up</h1>
 	<div class="underlined">
 		<input type="email" class="input clean-input underlined" placeholder="Email" bind:value={email}>
 	</div>
 	<div class="underlined">
 		<input type="password" class="input clean-input underlined" placeholder="Password" bind:value={password}>  
 	</div>
-	<button class="clean-button has-text-centered" on:click={login}>GO</button>
+	<button class="clean-button has-text-centered" on:click={addUser}>GO</button>
 </div>
 
 <!-- <input type="email" bind:value={email} />
