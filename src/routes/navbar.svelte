@@ -85,5 +85,14 @@
 				top: calc(50% + 6px);
 			}
 		}
+        // make bigger burger work in 'x' form
+        .navbar-burger.is-active span {
+            &:nth-child(1) {
+                transform: translateY(7px) rotate(45deg)
+            }
+            &:nth-child(3) {
+                transform: translateY(-7px) rotate(-45deg)
+            }
+        }
 	}
 </style>
