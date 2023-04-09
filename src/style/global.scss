@@ -1,4 +1,103 @@
 @use "bulma/sass/utilities/all" as defaults;
 @import "vars";
 
+body {
+	overflow-y: hidden;
+}
+
+.input.clean-input {
+	font-size: 2.5em;
+	color: $text-dim;
+	background: none !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1.5em;
+
+    &::placeholder {
+        color: $text-dim;
+    }
+}
+.clean-button {
+	font-size: 3em;
+    font-family: $family-secondary;
+    font-weight: bold;
+
+	color: $text-dim;
+
+	background: none !important;
+	border: none !important;
+	box-shadow: none !important;
+
+    cursor: pointer;
+}
+
+@mixin underlined($thickness) {
+	position: relative;
+
+	&::after {
+		content: "";
+		position: absolute;
+		left: 0;
+        top: 100%;
+		width: 100%;
+		height: $thickness;
+		background-color: $text-dimmer;
+	}
+}
+
+.underlined {
+	@include underlined(4px);
+
+    &::after {
+        background-color: rgba(255, 255, 255, 0.5)
+    }
+
+    &::before {
+        content: "";
+
+        position: absolute;
+        top: 100%;
+        left: 0;
+
+        width: 100%;
+        height: 4px;
+
+        transform: scaleX(0);
+        transform-origin: right;
+        transition: transform 0.5s, color 0.2s;
+        background-color: white;
+    }
+
+    &:has(input:focus) {
+        &::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+    }
+}
+
+.title {
+	font-family: $family-secondary;
+
+	// the big titles on the main page
+	&.main {
+		font-size: 4rem;
+		color: $text-dim;
+		&:first-child {
+			margin-bottom: 0;
+		}
+	}
+
+	&.is-special,
+	.is-special {
+		color: $secondary-light;
+	}
+}
+.subtitle {
+	&.main {
+		color: $text-dimmer;
+		max-width: 50vh;
+	}
+}
+
 @import "bulma/bulma";

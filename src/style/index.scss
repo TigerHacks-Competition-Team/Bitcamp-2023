@@ -33,29 +33,6 @@
 	}
 }
 
-.title {
-	font-family: $family-secondary;
-
-	// the big titles on the main page
-	&.main {
-		font-size: 4rem;
-		color: $text-dim;
-		&:first-child {
-			margin-bottom: 0;
-		}
-	}
-
-	&.is-special, .is-special {
-		color: $secondary-light;
-	}
-}
-.subtitle {
-	&.main {
-		color: $text-dimmer;
-		max-width: 50vh;
-	}
-}
-
 // add extra top margin to the first section, relative to how much teh screen can fit
 // also, make it the height of the background
 .section:first-of-type {
@@ -198,19 +175,14 @@
 			position: relative;
 
 			input, button {
-				font-size: 2.5em;
-				color: $text-dim;
-				background: none !important;
-				border: none !important;
-				box-shadow: none !important;
 				font-family: $family-secondary;
 				display: inline;
-				height: 1.5em;
 			}
 
 			input {
 				width: calc(100% - 3em);
 				padding: 0 0.25em;
+				
 
 				&::placeholder {
 					color: $text-dim;
@@ -220,7 +192,14 @@
 			button {
 				display: inline;
 				width: max-content;
+
+				color: $text-dim;
+				background: none !important;
+				border: none !important;
+				box-shadow: none !important;
+
 				margin-top: -0.1em;
+				height: 1.5em;
 				
 				font-size: 3em;
 				font-weight: bold;

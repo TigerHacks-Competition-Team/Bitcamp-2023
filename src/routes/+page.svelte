@@ -87,7 +87,7 @@
 		<div class="corners" />
 		<h1 class="title is-1 has-text-centered is-special main">Get Started</h1>
 		<div id="get-started-input">
-			<input type="text" class="input" placeholder="Enter your email..." />
+			<input type="text" class="input clean-input" placeholder="Enter your email..." />
 			<button>GO</button>
 		</div>
 	</div>
