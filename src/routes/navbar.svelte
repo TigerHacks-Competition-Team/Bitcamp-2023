@@ -52,6 +52,7 @@
 	// navbar
 	#navbar {
 		font-family: $family-secondary;
+        padding: 0.75em 1em 0 1em;
 
 		// links
 		a {
