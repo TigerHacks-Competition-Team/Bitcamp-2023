@@ -2,7 +2,7 @@
 @import "vars";
 
 body {
-    overflow-y: hidden;
+	overflow-y: hidden;
 }
 
 // gradient background
@@ -14,7 +14,28 @@ body {
 	width: 100vw;
 	height: 100vh;
 	// angle it
-	clip-path: polygon(0% 0%, 100% 0%, 100% calc(75% - 20vw), 0% 100%);
+	clip-path: polygon(0% 0%, 100% 0%, 100% calc(75vh - 20vw), 0% 100%);
+
+	@include defaults.mobile {
+		clip-path: polygon(0% 0%, 100% 0%, 100% calc(85vh - 20vw), 0% 90%);
+	}
+}
+
+// piano image
+#piano {
+	position: absolute;
+	top: calc(65vh - 20vw);
+	right: -10%;
+
+	width: 70vw;
+	filter: drop-shadow(0px 0px 50px rgba(0, 0, 0, 0.5));
+	transform: rotateZ(-25deg);
+
+	z-index: -10;
+
+	@include defaults.mobile {
+		display: none;
+	}
 }
 
 .simple-button {
@@ -41,12 +62,12 @@ body {
 // also, make it the height of the background
 .section:first-of-type {
 	margin-top: max(0px, 50vh - 25em);
-	// 3.25rem is default navbar height, 6rem is .section vertical padding
-	min-height: calc(100vh - 3.25rem - 6rem);
+	// 3.25rem is default navbar height, 6rem is .section vertical padding, 7.5wv is for better widescreen compat
+	min-height: calc(100vh - 3.25rem - 6rem + 7.5vw);
 }
 // make the first section shorter if the navbar is expanded
 #navbar:not(.is-inactive) + .section {
-	min-height: calc(100vh - 6.5rem - 6rem);
+	min-height: calc(100vh - 6.5rem - 6rem + 7.5vw);
 }
 
 @include defaults.tablet {
@@ -77,9 +98,9 @@ body {
 
 // waves
 .waves {
-    height: 15vh;
-    width: 100%;
-    opacity: 0.3;
+	height: 15vh;
+	width: 100%;
+	opacity: 0.3;
 
 	.parallax > use {
 		animation: move-forever 25s cubic-bezier(0.55, 0.5, 0.45, 0.5) infinite;
@@ -103,14 +124,13 @@ body {
 }
 
 @keyframes move-forever {
-    0% {
-        transform: translate3d(-90px, 0, 0);
-    }
-    100% {
-        transform: translate3d(85px, 0, 0);
-    }
+	0% {
+		transform: translate3d(-90px, 0, 0);
+	}
+	100% {
+		transform: translate3d(85px, 0, 0);
+	}
 }
-
 
 // bottom 'get started' / footer
 #fancy-footer {
@@ -129,8 +149,9 @@ body {
 		padding: 0 10vw;
 		position: relative;
 		z-index: 2;
-	
-		&::before, &::after {
+
+		&::before,
+		&::after {
 			content: "";
 			position: absolute;
 			top: 0;
@@ -146,15 +167,16 @@ body {
 			right: 0;
 			border-bottom-left-radius: $footer-radius;
 		}
-	
+
 		.corners {
 			height: 2em;
 			width: 100%;
 			z-index: 3;
 			position: relative;
 			margin-bottom: 2em;
-	
-			&::before, &::after {
+
+			&::before,
+			&::after {
 				content: "";
 				position: absolute;
 				top: 0;
@@ -178,18 +200,28 @@ body {
 			margin: auto 15%;
 			position: relative;
 
-			input, button {
+			input,
+			button {
 				font-family: $family-secondary;
 				display: inline;
+
+				@include defaults.mobile {
+					display: block;
+					width: max-content;
+				}
 			}
 
 			input {
 				width: calc(100% - 3em);
 				padding: 0 0.25em;
-				
 
 				&::placeholder {
 					color: $text-dim;
+				}
+
+				@include defaults.mobile {
+					width: 100%;
+					font-size: 1.5em;
 				}
 			}
 
@@ -204,7 +236,7 @@ body {
 
 				margin-top: -0.1em;
 				height: 1.5em;
-				
+
 				font-size: 3em;
 				font-weight: bold;
 
