@@ -19,7 +19,9 @@
     const noteOnRotation = 95 * Math.PI / 180;
     const noteOffRotation = 90 * Math.PI / 180;
     const highlightedNoteMat = new THREE.MeshStandardMaterial({
-        color: "red"
+        color: 0x4287f5,
+        emissive: "white",
+        emissiveIntensity: 0.2
     });
     const cubeGeo = new THREE.BoxGeometry(0.1, 0.1, 0.1);
 
@@ -68,22 +70,22 @@
 
         scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(
-            45, 
+            20, 
             window.innerWidth / window.innerHeight, 
             0.1, 
             1000 
         );
 
-        scene.add(new THREE.AxesHelper(5));
-        scene.background = new THREE.Color(0x363636);
+        //scene.add(new THREE.AxesHelper(5));
+        scene.background = new THREE.Color(0x1c1c1c);
 
         const light = new THREE.PointLight();
         light.position.set(0.8, 70, 50.0);
         scene.add(light);
 
-        camera.position.x = 0.5;
-        camera.position.y = 7;
-        camera.position.z = 3;
+        camera.position.x = 0.4;
+        camera.position.y = 9;
+        camera.position.z = 4.5;
 
         camera.rotation.x = -1;
         camera.rotation.y = 0;
@@ -163,7 +165,7 @@
     
     function spawnNote(note: any) {
         let cube = new THREE.Mesh(cubeGeo, highlightedNoteMat);
-
+1
         let noteBone = keyboardSkeleton.children[getNoteBone(note.midi)];
         noteBone.getWorldPosition(cube.position);
         noteBone.getWorldScale(cube.scale);
@@ -186,11 +188,11 @@
         const midi = await Midi.fromUrl("../../TEST/test.mid");
         const notes: any[] = []
 
-        let audio = new Audio('../../TEST/test.wav')
-        //setTimeout(() => audio.play(), (initDistance/fallSpeed)*4 - midi.tracks[0].notes[0].time*1000)
+        let audio = new Audio('../../TEST/test.mp3')
 
         midi.tracks.forEach(track => {
             track.notes.forEach(note => {
+                if (note.midi > 87) return;
                 notes.push(spawnNote(note));
             })
         })
@@ -203,12 +205,6 @@
                 let { mesh, note } = notes[i]
                 mesh.position.z += unitsPerUpdate
 
-                //if (mesh.position.z - mesh.scale.z/2) {
-                    //if (playerHoldingNotes.includes(note)) {
-                    //    console.log("yay")
-                    //}
-                //}
-                
                 if (mesh.position.z > 0) {
                     scene.remove(mesh)
                     notes.splice(i, 1)
