@@ -14,6 +14,9 @@
 	}
 
 	onMount(() => {
+		const piano = document.getElementById("piano") as HTMLElement;
+		piano.style.top = `calc(55vh - 20vw)`;
+		piano.style.right = `-10%`;
 		rotatePiano();
 		window.addEventListener("resize", rotatePiano);
 	});

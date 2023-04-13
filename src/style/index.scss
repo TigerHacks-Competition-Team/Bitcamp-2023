@@ -24,14 +24,16 @@ body {
 // piano image
 #piano {
 	position: absolute;
-	top: calc(55vh - 20vw);
-	right: -10%;
+	// this uses the equation from the clip-path of the bg so everything lines up
+	top: calc((100vh - (75vh - 20vw)) * -1);
+	right: -100vw;
 
 	width: 70vw;
 	filter: drop-shadow(0px 0px 50px rgba(0, 0, 0, 0.5));
 	// transform: rotateZ(-25deg);
-	transform: rotateZ(-50deg) translate(100%, -90%);
-	transition: transform 2s cubic-bezier(0.67, 0.5, 0.28, 1.19);
+	// transform: rotateZ(-50deg) translate(100%, -90%);
+	// transition: transform 2s cubic-bezier(0.67, 0.5, 0.28, 1.19);
+	transition: top 2s cubic-bezier(0.67, 0.5, 0.28, 1.19), right 2s cubic-bezier(0.67, 0.5, 0.28, 1.19);
 
 	z-index: -10;
 
