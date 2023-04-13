@@ -31,8 +31,7 @@
 	<h1 class="title is-1 main">Learning Piano.</h1>
 	<h1 class="title is-1 is-special main">One Key at a Time.</h1>
 	<h3 class="subtitle is-3 main">
-		Learning with playright is easy and fun. Just drop in a song and play
-		away!
+		Learning with Playright is easy and fun. Just drop in a song and play away!
 	</h3>
 </div>
 
@@ -66,8 +65,13 @@
 			<h1 class="title is-1 has-text-right">Play your way</h1>
 			<h3 class="subtitle is-4 has-text-right">
 				We use songs from YouTube's extensive library, letting you play along with any song you
-				want. This makes your sessions more memorable, making Playright an effective tool.
+				want. This makes your sessions more memorable, helping Playright become an effective tool.
 			</h3>
+			<div class="dots" style="float: right">
+				<span />
+				<span />
+				<span />
+			</div>
 		</div>
 	</div>
 </div>

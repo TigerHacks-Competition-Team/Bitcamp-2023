@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { writable } from "svelte/store";
 import { onMount } from "svelte";
+import { goto } from "$app/navigation";
 
 const firebaseConfig = {
 	apiKey: import.meta.env.VITE_APIKEY,
@@ -15,8 +16,14 @@ const firebaseConfig = {
 export const user = writable();
 
 export const app = initializeApp(firebaseConfig);
-export const auth = getAuth()
+export const auth = getAuth();
+
+let initialChangeFired = false;
 
 auth.onAuthStateChanged(u => {
 	user.set(u);
+	if (initialChangeFired && user && window && window.location.pathname != "/") {
+		window.location.pathname = "/home"
+	}
+	initialChangeFired = true;
 });

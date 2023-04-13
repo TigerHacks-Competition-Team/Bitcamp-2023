@@ -17,7 +17,10 @@
 
 <nav class="navbar is-inactive" id="navbar">
 	<div class="navbar-brand">
-		<a href="/" class="navbar-item">Playright</a>
+		<a href="/" class="navbar-item">
+            <img src="/img/logo.png" alt="" style="width: 1.25em; height: 1.25em; max-height: unset; margin-right: 0.5em">
+            Playright
+        </a>
 		<!-- svelte-ignore a11y-missing-attribute -->
 		<a
 			class="navbar-burger"
