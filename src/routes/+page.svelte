@@ -135,7 +135,7 @@
 		<div class="columns">
 			<div class="column">
 				<h1 class="title is-1 is-special">Playright</h1>
-				<h3 class="subtitle is-3">Lorem ipsum dolor sit amet.</h3>
+				<h3 class="subtitle is-3">Learning piano. One key at a time.</h3>
 			</div>
 			<div class="column">
 				<p>
